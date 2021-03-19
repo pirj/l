@@ -1,0 +1,139 @@
+# inspiration
+
+lisp: quote􏰀 atom􏰀 eq􏰀 car􏰀 cdr􏰀 cons􏰀 cond
+factor: dup swap drop call
+
+# refs
+
+concatenative https://concatenative.org/wiki/view/Concatenative%20language/Concatenation%20is%20composition
+factor cookbook https://docs.factorcode.org/content/article-cookbook.html
+factor handbook https://docs.factorcode.org/content/article-handbook.html
+lisp bootstrap http://programmingpraxis.codepad.org/8cfeZ3ER
+lisp http://www.gigamonkeys.com/book/practical-a-simple-database.html
+http://htdp.org/2003-09-26/Book/curriculum-Z-H-5.html
+
+https://github.com/andreaferretti/factor-tutorial#metaprogramming - parsing words
+https://crystal-lang.org/reference/syntax_and_semantics/macros/index.html - crystal macros
+
+https://concatenative.org/wiki/view/Factor/Optimization
+https://concatenative.org/wiki/view/Factor/Optimizing%20compiler
+https://en.wikipedia.org/wiki/Static_single_assignment_form
+
+# motivation
+
+compare with lisp, ruby, clojure, haskell, python, js, go, rust
+
+consiceness - less to type
+simplicity - easy to read
+interop - use your existing stack, use FOR your existing stack (as lib)
+general-purpose - use for anything
+exceptions, cooperative threading - https://concatenative.org/wiki/revision/1184
+garbage collection
+simple but not naive parsing - able to understand that 'word is a quoted word and [dup push]
+extensible with parsing words - similar to lisp macros
+refactoring toolset built-in - allows to find common code that can be compacted
+effect inference and stack offect checks
+homoiconic - code is data
+types, objects - specific implementations (e.g. https://docs.factorcode.org/content/word-sum-of-squares,math.statistics.html)
+
+# ffi interop
+
+nix: file:open file:read file:write file:close
+
+# parser
+
+https://github.com/dryruby/ebnf#parsing-an-ebnf-grammar
+https://github.com/cjheath/treetop
+https://github.com/floraison/raabro
+www.vpri.org/pdf/tr2010003_PEG.pdf source->ast->pseudo->machine
+
+# interpreter (ruby)? jit (which vm)?
+
+asm linux http://asm.sourceforge.net/articles/linasm.html
+linux syscalls https://linuxhint.com/list_of_linux_syscalls/
+https://habr.com/ru/post/347596/
+
+Factor's optimizing compiler generates machine code for x86 (32 and 64-bit), as well as PowerPC (32-bit only). The optimizing compiler is written entirely in Factor. Its implementation can be found in basis/compiler/ and basis/cpu/
+
+http://microvm.github.io/ (dead)
+
+# bootstrap
+
+ruby?
+
+# elements
+
+abc-def                  # word = function
+1 "hello"                # literals
+(1 "hello, world" 3.14)  # list = data
+[ 3 + ]                  # quotation - is an anonymous function (a value denoting a snippet of code)
+'filter                  # quotation of one element
+'false                   # not a special word or a symbol, a quoted word. the difference is that the word is implemented to return quoted itself, and thus it is equal to itself only
+
+a quotation is only identical to itself
+> is 'false 'false
+true
+> is 'false 'true
+false
+
+'false (-- false) [ 'false ] def
+'true (-- true) [ 'true ] def
+
+> 'false
+[ false ]
+
+> false
+[ false ]
+
+> 1 2 sum
+3
+
+> 1 2 'sum call
+3
+
+> 1 2 [ sum ] call
+3
+
+> 1 2 [sum] call
+3
+
+# inline replacement
+
+'twice (n -- double-n) [ 2 mul ] def
+'sq (n - n-squared) [ dup mul ] def
+'
+
+# annotations
+
+'sum-of-squares (seq -- sum) [ [ sq ] map sum ] private def
+                                                ^^^^^^^ specifies a special place in the namespace that won't be exported and made available for consumers
+
+'
+
+# sneak peek
+
+'music-db namespace
+          ^^^^^^^^^ creates a hashmap of words (functions) in the lexical scope, that can be called locally, and can be imported to a different scope by a handle
+
+'make-cd (title artist rating -- cd) [ array:new3 ] def
+^^^^^^^^ defined method name - quoted word
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^ signature - list of consumed words and effect
+                                     ^^^^^^^^^^^^^^ quoted implementation
+                                                    ^^^ adds method implementation to the namespace
+
+'make-db ( -- db) [ array:new ] def
+'add-record (db record -- db) [ array:push ] def
+
+> make-db
+()
+> "foo biters" "bar buzz" 5.0 make-cd
+()
+(artist: "foo biters" title: "bar buzz" rating: 5.0)
+> add-record
+((artist: "foo biters" title: "bar buzz" rating: 5.0))
+> dup first 'artist fetch
+((artist: "foo biters" title: "bar buzz" rating: 5.0))
+"foo biters"
+
+
+
