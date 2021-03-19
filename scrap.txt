@@ -61,14 +61,6 @@ http://microvm.github.io/ (dead)
 
 ruby?
 
-# elements
-
-abc-def                  # word = function
-1 "hello"                # literals
-(1 "hello, world" 3.14)  # list = data
-[ 3 + ]                  # quotation - is an anonymous function (a value denoting a snippet of code)
-'filter                  # quotation of one element
-'false                   # not a special word or a symbol, a quoted word. the difference is that the word is implemented to return quoted itself, and thus it is equal to itself only
 
 a quotation is only identical to itself
 > is 'false 'false
@@ -136,4 +128,21 @@ false
 "foo biters"
 
 
+## Memory efficiency vs Computation efficiency dilemma
 
+```
+'sum-of-squares (sequence -- sum)
+  [ 'sq map sum ]
+```
+is memory-inefficient, as it would require another the memory for the list
+process in-place?
+pipeline-like?
+  Ruby lazy enumerator?
+  Java-like buffered streams?
+
+endless streams?
+
+at times, memory is not a problem, when building a computationally-expensive sequence
+if it's not computationally expensive, e.g. `100 [1,b]`, it might be dynamic and lazy
+
+memoizable isn't mutually exclusive with dynamic

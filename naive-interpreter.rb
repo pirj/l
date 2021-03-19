@@ -18,7 +18,8 @@ class AST < Parser
 
   def parse
     while tokens.any?
-      token
+      expression = next_expression
+      expressions << expression if expression
     end
 
     expressions
@@ -28,20 +29,22 @@ class AST < Parser
 
   attr_reader :expressions
 
-  def token
+  def next_expression
     case tokens.first
-      when '.' # begin of comment
-        expressions << Comment.new(tokens).parse
+      when '=' # begin of comment
+        Comment.new(tokens).parse
       when '[' # begin of quotation
-        expressions << QuoteParser.new(tokens).parse
+        QuoteParser.new(tokens).parse
       when /\d+/ # integer literal
-        expressions << NumberLiteral.new(tokens).parse
+        NumberLiteral.new(tokens).parse
       when /[\w-]+/
-        expressions << WordParser.new(tokens).parse
+        WordParser.new(tokens).parse
       when /\n/
         tokens.shift
+        nil
       else
-        p "WTF #{tokens.shift}"
+        warn "WTF #{tokens.shift}"
+        nil
       end
   end
 end
@@ -85,7 +88,8 @@ class QuoteParser < AST
   def parse
     tokens.shift # [
     while tokens.any? && (tokens.first != "]")
-      token
+      expression = next_expression
+      expressions << expression if expression
     end
     tokens.shift # ]
     Quote.new(*expressions)
