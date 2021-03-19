@@ -62,6 +62,9 @@ class AST
       "<comment>"
     end
 
+    def run(context)
+    end
+
     private
 
     attr_reader :comment
@@ -75,6 +78,10 @@ class AST
 
     def inspect
       "<number: #{@number}>"
+    end
+
+    def run(context)
+      context.stack.push(@number)
     end
   end
 
@@ -102,13 +109,35 @@ class AST
       self
     end
 
+    def run(context)
+      word = context.scope[@word]
+      word.call(context.stack, context.scope)
+    end
+
     def inspect
       @word.to_s
     end
   end
 end
 
-# include the freaking newlines: just too hard for me with regex
+# lexer: include the freaking newlines (just too hard for me with regex)
 tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
 
-p AST.parse(tokens)
+# parser
+ast = AST.parse(tokens)
+
+# interpreter, for now just
+#   puts
+#   dup
+#   mul
+#   def
+scope = {
+  'puts' => ->(stack, _scope) { puts stack.pop },
+  'dup'  => ->(stack, _scope) { stack.push(stack.last) },
+  'mul'  => ->(stack, _scope) { stack.push(stack.pop * stack.pop) }
+}
+require 'ostruct'
+context = OpenStruct.new(stack: [], scope: scope)
+ast.each do |expression|
+  expression.run(context)
+end
