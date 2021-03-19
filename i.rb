@@ -1,6 +1,6 @@
 source = File.read(ARGV.first)
 
-class Element
+class Parser
   def initialize(tokens)
     @tokens = tokens
   end
@@ -10,7 +10,7 @@ class Element
   attr_reader :tokens
 end
 
-class AST < Element
+class AST < Parser
   def initialize(tokens)
     super
     @expressions = []
@@ -37,7 +37,7 @@ class AST < Element
       when /\d+/ # integer literal
         expressions << NumberLiteral.new(tokens).parse
       when /[\w-]+/
-        expressions << Word.new(tokens).parse
+        expressions << WordParser.new(tokens).parse
       when /\n/
         tokens.shift
       else
@@ -46,7 +46,7 @@ class AST < Element
   end
 end
 
-class Comment < Element
+class Comment < Parser
   def parse
     parts = tokens.take_while { |token| token != "\n" }
     parts.count.times { tokens.shift }
@@ -66,7 +66,7 @@ class Comment < Element
   attr_reader :comment
 end
 
-class NumberLiteral < Element
+class NumberLiteral < Parser
   def parse
     @number = Integer(tokens.shift)
     self
@@ -92,16 +92,21 @@ class QuoteParser < AST
   end
 end
 
+class WordParser < Parser
+  def parse
+    word = tokens.shift
+    Word.new(word)
+  end
+end
+
 class Quote
   def initialize(*expressions)
     @expressions = expressions
   end
 
-  attr_accessor :expressions
-
   def inspect
     expressions.one? ?
-      "'#{expressions.first}" :
+      "'#{expressions.first.inspect}" :
       "[ #{expressions.map(&:inspect).join(' ')} ]"
   end
 
@@ -115,33 +120,48 @@ class Quote
     end
   end
 
-  def ==(other)
-    expressions.count == other.expressions.count &&
-      expressions.each_with_index.all? { |part, index| part == other.expressions[index] }
+  def eql?(other)
+    expressions.eql?(other.expressions)
   end
 
   def hash
     @__hash = expressions.hash
   end
+
+  protected
+
+  attr_accessor :expressions
 end
 
-class Word < Element
-  def parse
-    @word = tokens.shift
-    self
+class Word
+  def initialize(word)
+    @word = word
   end
 
-  # yuck
-  attr_reader :word
+  def self.quoted(word)
+    Quote.new(new(word))
+  end
 
   def run(context)
-    quote = context.scope.fetch(@word)
+    quote = context.scope.fetch(Quote.new(self))
     quote.call(context)
   end
 
   def inspect
-    @word.to_s
+    word.to_s
   end
+
+  def hash
+    word.hash
+  end
+
+  def eql?(other)
+    word.eql?(other.word)
+  end
+
+  protected
+
+  attr_reader :word
 end
 
 class Builtin
@@ -164,20 +184,15 @@ tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
 # parser
 ast = AST.new(tokens).parse
 
-# interpreter, for now just
-#   puts
-#   dup
-#   mul
-#   def
+# interpreter, for now just puts dup mul def
 scope = {
-  'puts' => Builtin.new { |stack, _scope| puts stack.pop },
-  'dup'  => Builtin.new { |stack, _scope| stack.push(stack.last) },
-  'mul'  => Builtin.new { |stack, _scope| stack.push(stack.pop * stack.pop) },
-  'def'  => Builtin.new { |stack, scope|  quote = stack.pop; unquoted_word = stack.pop.expressions.first.word; scope[unquoted_word] = quote }
+  Word.quoted('puts') => Builtin.new { |stack, _scope| puts stack.pop },
+  Word.quoted('dup')  => Builtin.new { |stack, _scope| stack.push(stack.last) },
+  Word.quoted('mul')  => Builtin.new { |stack, _scope| stack.push(stack.pop * stack.pop) },
+  Word.quoted('def')  => Builtin.new { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
 }
 require 'ostruct'
 context = OpenStruct.new(stack: [], scope: scope)
 ast.each do |expression|
   expression.run(context)
-  # puts({e: expression, c: context})
 end
