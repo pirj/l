@@ -1,13 +1,19 @@
 source = File.read(ARGV.first)
 
-class AST
-  def self.parse(tokens)
-    new(tokens).parse
-  end
-
+class Element
   def initialize(tokens)
     @tokens = tokens
-    @ast = []
+  end
+
+  private
+
+  attr_reader :tokens
+end
+
+class AST < Element
+  def initialize(tokens)
+    super
+    @expressions = []
   end
 
   def parse
@@ -15,108 +21,140 @@ class AST
       token
     end
 
-    ast
+    expressions
   end
 
   private
 
-  attr_reader :tokens
-  attr_reader :ast
+  attr_reader :expressions
 
   def token
     case tokens.first
       when '.' # begin of comment
-        ast << Comment.new(tokens).parse
+        expressions << Comment.new(tokens).parse
       when '[' # begin of quotation
-        ast << Quote.new(tokens).parse
+        expressions << QuoteParser.new(tokens).parse
       when /\d+/ # integer literal
-        ast << NumberLiteral.new(tokens).parse
+        expressions << NumberLiteral.new(tokens).parse
       when /[\w-]+/
-        ast << Word.new(tokens).parse
+        expressions << Word.new(tokens).parse
       when /\n/
         tokens.shift
       else
         p "WTF #{tokens.shift}"
       end
   end
+end
 
-  class Element
-    def initialize(tokens)
-      @tokens = tokens
-    end
-
-    private
-
-    attr_reader :tokens
+class Comment < Element
+  def parse
+    parts = tokens.take_while { |token| token != "\n" }
+    parts.count.times { tokens.shift }
+    @comment = parts.join(' ')
+    self
   end
 
-  class Comment < Element
-    def parse
-      parts = tokens.take_while { |token| token != "\n" }
-      parts.count.times { tokens.shift }
-      @comment = parts.join(' ')
-      self
-    end
-
-    def inspect
-      "<comment>"
-    end
-
-    def run(context)
-    end
-
-    private
-
-    attr_reader :comment
+  def inspect
+    "<comment>"
   end
 
-  class NumberLiteral < Element
-    def parse
-      @number = Integer(tokens.shift)
-      self
-    end
+  def run(context)
+  end
 
-    def inspect
-      "<number: #{@number}>"
-    end
+  private
 
-    def run(context)
-      context.stack.push(@number)
+  attr_reader :comment
+end
+
+class NumberLiteral < Element
+  def parse
+    @number = Integer(tokens.shift)
+    self
+  end
+
+  def inspect
+    "<number: #{@number}>"
+  end
+
+  def run(context)
+    context.stack.push(@number)
+  end
+end
+
+class QuoteParser < AST
+  def parse
+    tokens.shift # [
+    while tokens.any? && (tokens.first != "]")
+      token
+    end
+    tokens.shift # ]
+    Quote.new(*expressions)
+  end
+end
+
+class Quote
+  def initialize(*expressions)
+    @expressions = expressions
+  end
+
+  attr_accessor :expressions
+
+  def inspect
+    expressions.one? ?
+      "'#{expressions.first}" :
+      "[ #{expressions.map(&:inspect).join(' ')} ]"
+  end
+
+  def run(context)
+    context.stack.push(self)
+  end
+
+  def call(context)
+    expressions.each do |expression|
+      expression.run(context)
     end
   end
 
-  class Quote < Element
-    def parse
-      tokens.shift
-      self.parts = tokens.take_while { |token| token != "]" }
-      tokens.shift
-      parts.count.times { tokens.shift }
-      self
-    end
-
-    def inspect
-      "<quote: [ #{parts.join(' ')} ]>"
-    end
-
-    private
-
-    attr_accessor :parts
+  def ==(other)
+    expressions.count == other.expressions.count &&
+      expressions.each_with_index.all? { |part, index| part == other.expressions[index] }
   end
 
-  class Word < Element
-    def parse
-      @word = tokens.shift
-      self
-    end
+  def hash
+    @__hash = expressions.hash
+  end
+end
 
-    def run(context)
-      word = context.scope[@word]
-      word.call(context.stack, context.scope)
-    end
+class Word < Element
+  def parse
+    @word = tokens.shift
+    self
+  end
 
-    def inspect
-      @word.to_s
-    end
+  # yuck
+  attr_reader :word
+
+  def run(context)
+    quote = context.scope.fetch(@word)
+    quote.call(context)
+  end
+
+  def inspect
+    @word.to_s
+  end
+end
+
+class Builtin
+  def initialize(&block)
+    @implementation = block
+  end
+
+  def call(context)
+    @implementation.call(context.stack, context.scope)
+  end
+
+  def inspect
+    "<predefined>"
   end
 end
 
@@ -124,7 +162,7 @@ end
 tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
 
 # parser
-ast = AST.parse(tokens)
+ast = AST.new(tokens).parse
 
 # interpreter, for now just
 #   puts
@@ -132,12 +170,14 @@ ast = AST.parse(tokens)
 #   mul
 #   def
 scope = {
-  'puts' => ->(stack, _scope) { puts stack.pop },
-  'dup'  => ->(stack, _scope) { stack.push(stack.last) },
-  'mul'  => ->(stack, _scope) { stack.push(stack.pop * stack.pop) }
+  'puts' => Builtin.new { |stack, _scope| puts stack.pop },
+  'dup'  => Builtin.new { |stack, _scope| stack.push(stack.last) },
+  'mul'  => Builtin.new { |stack, _scope| stack.push(stack.pop * stack.pop) },
+  'def'  => Builtin.new { |stack, scope|  quote = stack.pop; unquoted_word = stack.pop.expressions.first.word; scope[unquoted_word] = quote }
 }
 require 'ostruct'
 context = OpenStruct.new(stack: [], scope: scope)
 ast.each do |expression|
   expression.run(context)
+  # puts({e: expression, c: context})
 end
