@@ -100,7 +100,7 @@ https://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matte
 Work in progress. The current lexer/parser/interpreter are written in Ruby.
 
 Short-term plans:
- - [ ] parsing of simplified form for single-word quotes `'square`
+ - [x] parsing of simplified form for single-word quotes `'square`
  - [ ] bootstrap so L can interpret itself
  - [ ] settle on a set of base functions
 

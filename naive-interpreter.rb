@@ -1,5 +1,3 @@
-source = File.read(ARGV.first)
-
 class Parser
   def initialize(tokens)
     @tokens = tokens
@@ -33,8 +31,10 @@ class AST < Parser
     case tokens.first
       when '=' # begin of comment
         Comment.new(tokens).parse
-      when '[' # begin of quotation
+      when '[' # begin of quote
         QuoteParser.new(tokens).parse
+      when /^'/ # begin of single-quote
+        SingleQuoteParser.new(tokens).parse
       when /\d+/ # integer literal
         NumberLiteral.new(tokens).parse
       when /[\w-]+/
@@ -93,6 +93,13 @@ class QuoteParser < AST
     end
     tokens.shift # ]
     Quote.new(*expressions)
+  end
+end
+
+class SingleQuoteParser < AST
+  def parse
+    quoted_word = tokens.shift.slice(1..-1)
+    Quote.new(Word.new(quoted_word))
   end
 end
 
@@ -182,13 +189,15 @@ class Builtin
   end
 end
 
+source = File.read(ARGV.first)
+
 # lexer: include the freaking newlines (just too hard for me with regex)
 tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
 
 # parser
 ast = AST.new(tokens).parse
 
-# interpreter, for now just puts dup mul def
+# interpreter
 scope = {
   Word.quoted('puts') => Builtin.new { |stack, _scope| puts stack.pop },
   Word.quoted('dup')  => Builtin.new { |stack, _scope| stack.push(stack.last) },

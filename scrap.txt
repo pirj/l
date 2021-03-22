@@ -62,20 +62,20 @@ http://microvm.github.io/ (dead)
 ruby?
 
 
-a quotation is only identical to itself
+a quote is only identical to itself
 > is 'false 'false
 true
 > is 'false 'true
 false
 
-'false (-- false) [ 'false ] def
-'true (-- true) [ 'true ] def
+'false ( -- false ) [ 'false ] def
+'true ( -- true ) [ 'true ] def
 
 > 'false
-[ false ]
+'false
 
 > false
-[ false ]
+'false
 
 > 1 2 sum
 3
@@ -86,35 +86,29 @@ false
 > 1 2 [ sum ] call
 3
 
-> 1 2 [sum] call
-3
-
 # inline replacement
 
-'twice (n -- double-n) [ 2 mul ] def
-'sq (n - n-squared) [ dup mul ] def
-'
+'twice ( n -- double-n ) [ 2 mul ] def
+'sq ( n - n-squared ) [ dup mul ] def
 
 # annotations
 
-'sum-of-squares (seq -- sum) [ [ sq ] map sum ] private def
-                                                ^^^^^^^ specifies a special place in the namespace that won't be exported and made available for consumers
-
-'
+'sum-of-squares ( seq -- sum ) [ [ sq ] map sum ] private def
+                                                  ^^^^^^^ specifies a special place in the namespace that won't be exported and made available for consumers
 
 # sneak peek
 
 'music-db namespace
           ^^^^^^^^^ creates a hashmap of words (functions) in the lexical scope, that can be called locally, and can be imported to a different scope by a handle
 
-'make-cd (title artist rating -- cd) [ array:new3 ] def
+'make-cd ( title artist rating -- cd ) [ array:new3 ] def
 ^^^^^^^^ defined method name - quoted word
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ signature - list of consumed words and effect
                                      ^^^^^^^^^^^^^^ quoted implementation
                                                     ^^^ adds method implementation to the namespace
 
-'make-db ( -- db) [ array:new ] def
-'add-record (db record -- db) [ array:push ] def
+'make-db ( -- db ) [ array:new ] def
+'add-record ( db record -- db ) [ array:push ] def
 
 > make-db
 ()
@@ -122,16 +116,16 @@ false
 ()
 (artist: "foo biters" title: "bar buzz" rating: 5.0)
 > add-record
-((artist: "foo biters" title: "bar buzz" rating: 5.0))
+(( artist: "foo biters" title: "bar buzz" rating: 5.0 ))
 > dup first 'artist fetch
-((artist: "foo biters" title: "bar buzz" rating: 5.0))
+(( artist: "foo biters" title: "bar buzz" rating: 5.0 ))
 "foo biters"
 
 
 ## Memory efficiency vs Computation efficiency dilemma
 
 ```
-'sum-of-squares (sequence -- sum)
+'sum-of-squares ( sequence -- sum )
   [ 'sq map sum ]
 ```
 is memory-inefficient, as it would require another the memory for the list
@@ -141,8 +135,11 @@ pipeline-like?
   Java-like buffered streams?
 
 endless streams?
+or even finite streams: "abc" chars first - makes no sense to split all when we only need first
 
 at times, memory is not a problem, when building a computationally-expensive sequence
 if it's not computationally expensive, e.g. `100 [1,b]`, it might be dynamic and lazy
 
 memoizable isn't mutually exclusive with dynamic
+
+sometimes prompt (immediate) output is more important that the overall processing speed, e.g. screen output
