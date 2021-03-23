@@ -1,8 +1,8 @@
 = no functions, straight execution
-7 dup mul puts
+7 dup * puts
 
 = define a function named "square-of-double"
-'square-of-double [ 2 mul dup mul ] def
+'square-of-double [ 2 * dup * ] def
 
 5 square-of-double puts
 = outputs 100
@@ -20,3 +20,12 @@ false puts
 =   1 puts
 [ 1 puts ] call
 = outputs 1
+
+= basic arithmetic
+
+5 3 -  = 2
+4 *    = 8
+2 +    = 10
+5 /    = 2
+puts
+= outputs 2

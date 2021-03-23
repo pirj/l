@@ -70,7 +70,7 @@ Functions and methods most probably sound familiar to you. L is not exception to
 
 Define a function named `multiply-by-two`. Followed by a square-bracket delimited anonymous function, or a quote, a code block that represents the implementation. And `def` glue code follows to save the reference to this function in the scope by the name.
 ```
-'multiply-by-two [ 2 mul ] def
+'multiply-by-two [ 2 * ] def
 ```
 
 Let's use it by adding some data, and using the results by outputting them to the console.

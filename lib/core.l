@@ -1,13 +1,33 @@
+== Logic
+
 = false returns itself
 'false [ 'false ] def
 
-= builtin 'mul ( x y -- product )
+
+== Basic arithmetic
+
+= builtin '+ ( x y -- sum )
+
+= builtin '- ( x y -- difference )
+
+= builtin '* ( x y -- product )
+
+= builtin '/ ( x y -- quotient )
+
+
+== Functions
 
 = builtin 'def ( name implementation -- )
 
-= builtin 'puts ( x -- )
+
+== Quotes
 
 = builtin 'call ( quote -- )
+
+
+== Input/output
+
+= builtin 'puts ( x -- )
 
 
 == Shuffle words

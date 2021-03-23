@@ -1,7 +1,7 @@
 It's possible to define a function using multiple-word quote and quote that aren't consisted of words:
 ```
-[ foo bar ] [ dup mul ] def
-[ 1 ] [ dup mul ] def
+[ foo bar ] [ dup * ] def
+[ 1 ] [ dup * ] def
 ```
 but there's no way to call such a function.
 For the rest of the language, I see no reason yet to distinct between single- and multi-expression quotes, so it might be a good idea to perform a check in `def`.
