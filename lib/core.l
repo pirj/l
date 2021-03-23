@@ -8,6 +8,8 @@
 
 = builtin 'not ( boolean -- inverse )
 
+= builtin 'when ( condition quote -- )
+
 
 == Basic arithmetic
 

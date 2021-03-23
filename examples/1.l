@@ -34,3 +34,7 @@ puts
 'false 'false is puts       = 'true
 'false 'ubiquitous is puts  = 'false
 'true not puts              = 'false
+
+= conditionals
+[ 1 puts ] false when       = outputs nothing
+[ 33 puts ] 'truthy when    = outputs 33
