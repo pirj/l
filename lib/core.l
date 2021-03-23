@@ -1,3 +1,6 @@
+= false returns itself
+'false [ 'false ] def
+
 = builtin 'mul ( x y -- product )
 
 = builtin 'def ( name implementation -- )

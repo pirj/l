@@ -10,3 +10,7 @@
 = stack shuffling
 1 2 3 2drop puts
 = outputs 1, since 2 and 3 are dropped
+
+'false puts
+false puts
+= outputs 'false twice

@@ -121,6 +121,10 @@ class Quote
       "[ #{expressions.map(&:inspect).join(' ')} ]"
   end
 
+  def to_s
+    inspect
+  end
+
   def run(context)
     context.stack.push(self)
   end
