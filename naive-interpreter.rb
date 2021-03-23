@@ -243,7 +243,10 @@ context = OpenStruct.new(stack: [], scope: scope, expressions: expressions)
 
 while expressions.any?
   expression = expressions.shift
+  warn "-- #{expression.inspect}" if ENV['DEBUG']
   expression.run(context)
+  warn " -: #{context.stack.join(' ')}" if ENV['DEBUG']
+  warn " -> #{expressions.map(&:inspect).join(' ')}\n\n" if ENV['DEBUG']
 end
 
 warn "Program left with a non-empty stack: #{context.stack}" unless context.stack.empty?
