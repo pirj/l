@@ -36,5 +36,5 @@ puts
 'true not puts              = 'false
 
 = conditionals
-[ 1 puts ] false when       = outputs nothing
-[ 33 puts ] 'truthy when    = outputs 33
+false [ 1 puts ] when       = outputs nothing
+'truthy [ 33 puts ] when    = outputs 33
