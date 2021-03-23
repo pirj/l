@@ -143,8 +143,6 @@ class Quote
     @__hash = expressions.hash
   end
 
-  protected
-
   attr_accessor :expressions
 end
 
@@ -185,7 +183,7 @@ class Builtin
   end
 
   def call(context)
-    @implementation.call(context.stack, context.scope)
+    @implementation.call(context.stack, context.scope, context.expressions)
   end
 
   def inspect
@@ -210,22 +208,24 @@ end
 
 scope = {}
 
-def_builtin(scope, 'puts') { |stack, _scope| puts stack.pop }
-def_builtin(scope, 'dup')  { |stack, _scope| stack.push(stack.last) }
-def_builtin(scope, 'mul')  { |stack, _scope| stack.push(stack.pop * stack.pop) }
+def_builtin(scope, 'puts') { |stack| puts stack.pop }
+def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
+def_builtin(scope, 'mul')  { |stack| stack.push(stack.pop * stack.pop) }
 def_builtin(scope, 'def')  { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
-def_builtin(scope, 'drop') { |stack, _scope| stack.pop }
-def_builtin(scope, 'pick') { |stack, _scope| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
-def_builtin(scope, 'swap') { |stack, _scope| a, b = stack.pop(2); stack.push(b, a) }
+def_builtin(scope, 'drop') { |stack| stack.pop }
+def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
+def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
+def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
-require 'ostruct'
-context = OpenStruct.new(stack: [], scope: scope)
-
 expressions = [*core_expressions, *program_expressions]
 
-expressions.each do |expression|
+require 'ostruct'
+context = OpenStruct.new(stack: [], scope: scope, expressions: expressions)
+
+while expressions.any?
+  expression = expressions.shift
   expression.run(context)
 end
 

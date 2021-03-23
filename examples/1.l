@@ -14,3 +14,9 @@
 'false puts
 false puts
 = outputs 'false twice
+
+= evaluates a quote
+= same as
+=   1 puts
+[ 1 puts ] call
+= outputs 1

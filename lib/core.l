@@ -7,6 +7,8 @@
 
 = builtin 'puts ( x -- )
 
+= builtin 'call ( quote -- )
+
 
 == Shuffle words
 
