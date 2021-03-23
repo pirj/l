@@ -29,7 +29,7 @@ class AST < Parser
 
   def next_expression
     case tokens.first
-      when '=' # begin of comment
+      when /^\=/ # begin of comment
         Comment.new(tokens).parse
       when '[' # begin of quote
         QuoteParser.new(tokens).parse
