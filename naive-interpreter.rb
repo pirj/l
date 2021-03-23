@@ -76,7 +76,11 @@ class NumberLiteral < Parser
   end
 
   def inspect
-    "<number: #{@number}>"
+    @number.to_s
+  end
+
+  def to_s
+    inspect
   end
 
   def run(context)
@@ -130,9 +134,7 @@ class Quote
   end
 
   def call(context)
-    expressions.each do |expression|
-      expression.run(context)
-    end
+    context.expressions.unshift(*expressions)
   end
 
   def eql?(other)
@@ -216,6 +218,12 @@ def_builtin(scope, 'drop') { |stack| stack.pop }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
+def_builtin(scope, 'tail-head') do |stack, _scope|
+  quote = stack.pop
+  raise 'Sequence has to be composed of two parts, head and tail' unless quote.expressions.length == 2
+  head, tail = quote.expressions
+  stack.push(tail, head)
+end
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)

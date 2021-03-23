@@ -22,3 +22,8 @@
 
 = ( x y -- )
 '2drop [ drop drop ] def
+
+
+== Sequence combinators
+
+= builtin 'tail-head ( sequence -- sequence-or-false value )
