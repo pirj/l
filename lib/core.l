@@ -3,6 +3,11 @@
 = false returns itself
 'false [ 'false ] def
 
+= ( condition -- is-false )
+'false? [ 'false is ] def
+
+= builtin 'not ( boolean -- inverse )
+
 
 == Basic arithmetic
 
@@ -24,6 +29,7 @@
 
 = builtin 'call ( quote -- )
 
+= builtin 'is ( quote quote -- boolean )
 
 == Input/output
 

@@ -227,6 +227,10 @@ def_builtin(scope, 'tail-head') do |stack, _scope|
   head, tail = quote.expressions
   stack.push(tail, head)
 end
+FALSE = Word.quoted('false')
+TRUE = Word.quoted('true')
+def_builtin(scope, 'is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
+def_builtin(scope, 'not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)

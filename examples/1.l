@@ -29,3 +29,8 @@ false puts
 5 /    = 2
 puts
 = outputs 2
+
+= equality comparison
+'false 'false is puts       = 'true
+'false 'ubiquitous is puts  = 'false
+'true not puts              = 'false
