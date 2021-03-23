@@ -209,3 +209,4 @@ context = OpenStruct.new(stack: [], scope: scope)
 ast.each do |expression|
   expression.run(context)
 end
+warn "Program left with a non-empty stack: #{context.stack}" unless context.stack.empty?
