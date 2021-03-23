@@ -101,6 +101,7 @@ Work in progress. The current lexer/parser/interpreter are written in Ruby.
 
 Short-term plans:
  - [x] parsing of simplified form for single-word quotes `'square`
+ - [ ] add error traces
  - [ ] bootstrap so L can interpret itself
  - [ ] settle on a set of base functions
 

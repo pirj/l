@@ -13,6 +13,7 @@ lisp http://www.gigamonkeys.com/book/practical-a-simple-database.html
 http://htdp.org/2003-09-26/Book/curriculum-Z-H-5.html
 
 https://github.com/andreaferretti/factor-tutorial#metaprogramming - parsing words
+https://www.forth.com/starting-forth/11-forth-compiler-defining-words/
 https://crystal-lang.org/reference/syntax_and_semantics/macros/index.html - crystal macros
 
 https://concatenative.org/wiki/view/Factor/Optimization
