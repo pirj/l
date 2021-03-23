@@ -33,6 +33,12 @@
 
 = builtin 'is ( quote quote -- boolean )
 
+= builtin 'curry ( expression quote -- quote )
+
+= ( x quote ( x -- ) -- x )
+'keep [ over swap call ] def
+
+
 == Input/output
 
 = builtin 'puts ( x -- )
@@ -41,6 +47,8 @@
 == Shuffle words
 
 = builtin 'dup ( x -- x x )
+
+= builtin 'over ( x y -- x y x )
 
 = builtin 'pick ( x y z -- x y z x )
 
