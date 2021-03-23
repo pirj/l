@@ -203,17 +203,23 @@ def expressions_from_file(filename)
   AST.new(tokens).parse
 end
 
+# builtins
+def def_builtin(scope, name, &block)
+  scope[Word.quoted(name)] = Builtin.new(&block)
+end
+
+scope = {}
+
+def_builtin(scope, 'puts') { |stack, _scope| puts stack.pop }
+def_builtin(scope, 'dup')  { |stack, _scope| stack.push(stack.last) }
+def_builtin(scope, 'mul')  { |stack, _scope| stack.push(stack.pop * stack.pop) }
+def_builtin(scope, 'def')  { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
+def_builtin(scope, 'drop') { |stack, _scope| stack.pop }
+def_builtin(scope, 'pick') { |stack, _scope| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
+def_builtin(scope, 'swap') { |stack, _scope| a, b = stack.pop(2); stack.push(b, a) }
+
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
-
-# interpreter
-scope = {
-  Word.quoted('puts') => Builtin.new { |stack, _scope| puts stack.pop },
-  Word.quoted('dup')  => Builtin.new { |stack, _scope| stack.push(stack.last) },
-  Word.quoted('mul')  => Builtin.new { |stack, _scope| stack.push(stack.pop * stack.pop) },
-  Word.quoted('def')  => Builtin.new { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote },
-  Word.quoted('drop') => Builtin.new { |stack, _scope| stack.pop }
-}
 require 'ostruct'
 context = OpenStruct.new(stack: [], scope: scope)
 

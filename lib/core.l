@@ -12,7 +12,11 @@
 
 = builtin 'dup ( x -- x x )
 
+= builtin 'pick ( x y z -- x y z x )
+
 = builtin 'drop ( x -- )
+
+= builtin 'swap ( x y -- y x )
 
 = ( x y -- )
 '2drop [ drop drop ] def
