@@ -35,7 +35,7 @@ class AST < Parser
         QuoteParser.new(tokens).parse
       when /^'/ # begin of single-quote
         SingleQuoteParser.new(tokens).parse
-      when /\d+/ # integer literal
+      when /^\d+$/ # integer literal
         NumberLiteral.new(tokens).parse
       when /[\w-]+/
         WordParser.new(tokens).parse
@@ -189,24 +189,34 @@ class Builtin
   end
 end
 
-source = File.read(ARGV.first)
+def expressions_from_file(filename)
+  source = File.read(filename)
 
-# lexer: include the freaking newlines (just too hard for me with regex)
-tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
+  # lexer: include the freaking newlines (just too hard for me with regex)
+  tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
 
-# parser
-ast = AST.new(tokens).parse
+  # parser
+  AST.new(tokens).parse
+end
+
+core_expressions = expressions_from_file('lib/core.l')
+program_expressions = expressions_from_file(ARGV.first)
 
 # interpreter
 scope = {
   Word.quoted('puts') => Builtin.new { |stack, _scope| puts stack.pop },
   Word.quoted('dup')  => Builtin.new { |stack, _scope| stack.push(stack.last) },
   Word.quoted('mul')  => Builtin.new { |stack, _scope| stack.push(stack.pop * stack.pop) },
-  Word.quoted('def')  => Builtin.new { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
+  Word.quoted('def')  => Builtin.new { |stack, scope|  quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote },
+  Word.quoted('drop') => Builtin.new { |stack, _scope| stack.pop }
 }
 require 'ostruct'
 context = OpenStruct.new(stack: [], scope: scope)
-ast.each do |expression|
+
+expressions = [*core_expressions, *program_expressions]
+
+expressions.each do |expression|
   expression.run(context)
 end
+
 warn "Program left with a non-empty stack: #{context.stack}" unless context.stack.empty?
