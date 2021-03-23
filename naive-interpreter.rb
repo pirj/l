@@ -218,6 +218,7 @@ def_builtin(scope, '*')    { |stack| stack.push(stack.pop * stack.pop) }
 def_builtin(scope, '/')    { |stack| x, y = stack.pop(2); stack.push(x / y) }
 def_builtin(scope, 'def')  { |stack, scope| quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
 def_builtin(scope, 'drop') { |stack| stack.pop }
+def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
