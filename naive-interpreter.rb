@@ -116,13 +116,13 @@ end
 
 class Quote
   def initialize(*expressions)
-    @expressions = expressions
+    @exprs = expressions
   end
 
   def inspect
-    expressions.one? ?
-      "'#{expressions.first.inspect}" :
-      "[ #{expressions.map(&:inspect).join(' ')} ]"
+    exprs.one? ?
+      "'#{exprs.first.inspect}" :
+      "[ #{exprs.map(&:inspect).join(' ')} ]"
   end
 
   def to_s
@@ -134,18 +134,29 @@ class Quote
   end
 
   def call(context)
-    context.expressions.unshift(*expressions)
+    context.expressions.unshift(*exprs)
   end
 
   def eql?(other)
-    expressions.eql?(other.expressions)
+    exprs.eql?(other.exprs)
   end
 
   def hash
-    @__hash = expressions.hash
+    @__hash = exprs.hash
   end
 
-  attr_accessor :expressions
+  def two?
+    exprs.length == 2
+  end
+
+  # Prevent modification
+  def expressions
+    exprs.each
+  end
+
+  protected
+
+  attr_accessor :exprs
 end
 
 class Word
@@ -224,8 +235,8 @@ def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
 def_builtin(scope, 'tail-head') do |stack, _scope|
   quote = stack.pop
-  raise 'Sequence has to be composed of two parts, head and tail' unless quote.expressions.length == 2
-  head, tail = quote.expressions
+  raise 'Sequence has to be composed of two parts, head and tail' unless quote.two?
+  head, tail = *quote.expressions
   stack.push(tail, head)
 end
 FALSE = Word.quoted('false')
