@@ -233,7 +233,7 @@ TRUE = Word.quoted('true')
 def_builtin(scope, 'is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
 def_builtin(scope, 'not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
 def_builtin(scope, 'when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
-def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); quote.expressions.unshift(expression); stack.push(quote) }
+def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
