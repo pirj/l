@@ -10,6 +10,13 @@
 
 = builtin 'when ( condition quote -- )
 
+= TODO: rewrite with nip/keep
+= TODO: drop final 'false from stack
+= ( quote -- )
+'each [
+  swap tail-head pick call swap [ each ] curry over swap when
+] def
+
 
 == Basic arithmetic
 
