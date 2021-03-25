@@ -15,6 +15,7 @@ http://htdp.org/2003-09-26/Book/curriculum-Z-H-5.html
 https://github.com/andreaferretti/factor-tutorial#metaprogramming - parsing words
 https://www.forth.com/starting-forth/11-forth-compiler-defining-words/
 https://crystal-lang.org/reference/syntax_and_semantics/macros/index.html - crystal macros
+https://clojure.org/reference/macros
 
 https://concatenative.org/wiki/view/Factor/Optimization
 https://concatenative.org/wiki/view/Factor/Optimizing%20compiler
@@ -22,7 +23,7 @@ https://en.wikipedia.org/wiki/Static_single_assignment_form
 
 # motivation
 
-compare with lisp, ruby, clojure, haskell, python, js, go, rust
+provide code examples with comparisons with lisp, ruby, crystal, clojure, haskell, erlang, python, js, go, rust, lua
 
 consiceness - less to type
 simplicity - easy to read

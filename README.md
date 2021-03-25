@@ -10,7 +10,9 @@ L is a new programming language. It is:
 
 ## Inspiration Sources
 
-[Factor](https://factorcode.org/), [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)), [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)), and partially by [Ruby](https://www.ruby-lang.org/) and [Crystal](https://crystal-lang.org/).
+[Factor](https://factorcode.org/), [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)), [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)), [Clojure](https://clojure.org/about/rationale), [Erlang](https://rvirding.blogspot.com/2019/01/the-erlang-rationale.html), [Python](https://en.m.wikipedia.org/wiki/Zen_of_Python), Paul Graham's work on [Arc](http://www.paulgraham.com/lisp.html) and partially by [Ruby](https://www.ruby-lang.org/) and [Crystal](https://crystal-lang.org/).
+
+> One reason Lisp cores evolve so slowly is that we get used to them. You start to think in the operators that already exist. It takes a conscious effort to imagine how your code might be rewritten using operators that don't. -- Paul Graham
 
 ## Sneak Peek
 
