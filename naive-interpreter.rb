@@ -270,6 +270,7 @@ def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
 def_builtin(scope, '2over') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a, b) }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
+def_builtin(scope, '2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }
 
 def_builtin(scope, 'tail-head') do |stack, _scope|
   quote = stack.pop

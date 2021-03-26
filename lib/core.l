@@ -99,6 +99,8 @@
 
 = builtin 'swap ( x y -- y x )
 
+= builtin '2swap ( a b c d -- c d a b )
+
 = ( x y -- )
 '2drop [ drop drop ] def
 
