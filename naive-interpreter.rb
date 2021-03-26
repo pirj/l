@@ -299,7 +299,8 @@ expressions = [*core_expressions, *program_expressions]
 
 class Stack < Array
   def pop(*args)
-    raise 'Stack underflow' if args.any? && length < args.first
+    items = args.any? ? args.first : 1
+    raise 'Stack underflow' if length < items
     super
   end
 end
