@@ -222,29 +222,34 @@ end
 scope = {}
 
 def_builtin(scope, 'puts') { |stack| puts stack.pop }
-def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
+
 def_builtin(scope, '+')    { |stack| stack.push(stack.pop + stack.pop) }
 def_builtin(scope, '-')    { |stack| x, y = stack.pop(2); stack.push(x - y) }
 def_builtin(scope, '*')    { |stack| stack.push(stack.pop * stack.pop) }
 def_builtin(scope, '/')    { |stack| x, y = stack.pop(2); stack.push(x / y) }
+
 def_builtin(scope, 'def')  { |stack, scope| quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
+def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
+
+def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
 def_builtin(scope, 'drop') { |stack| stack.pop }
 def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
-def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
+
 def_builtin(scope, 'tail-head') do |stack, _scope|
   quote = stack.pop
   raise 'Sequence has to be composed of two parts, head and tail' unless quote.two?
   head, tail = *quote.expressions
   stack.push(tail, head)
 end
+def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
+
 FALSE = Word.quoted('false')
 TRUE = Word.quoted('true')
 def_builtin(scope, 'is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
 def_builtin(scope, 'not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
 def_builtin(scope, 'when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
-def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
