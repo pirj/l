@@ -113,3 +113,8 @@
 == Sequence combinators
 
 = builtin 'tail-head ( sequence -- sequence-or-false value )
+
+
+== Debug
+
+= builtin 'debug ( -- )

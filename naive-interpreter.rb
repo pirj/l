@@ -289,6 +289,8 @@ def_builtin(scope, 'when') { |stack, _, expressions| condition, quote = stack.po
 def_builtin(scope, 'dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
 def_builtin(scope, '2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
 
+def_builtin(scope, 'debug') { |stack, scope, expressions| require 'pry'; binding.pry }
+
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
 expressions = [*core_expressions, *program_expressions]
