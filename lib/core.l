@@ -42,9 +42,6 @@
 
 = builtin 'curry ( expression quote -- quote )
 
-= ( x quote ( x -- ) -- x )
-'keep [ over swap call ] def
-
 
 == Input/output
 
