@@ -26,13 +26,14 @@
   dip       = sequence value quote
   swap      = sequence quote value
   over      = sequence quote value quote
-  call      = sequence quote
+  2swap     = value quote sequence quote
+  'call 2dip = sequence quote
   [ each ]  = sequence quote [ each ]
   curry     = sequence [ quote each ]
   over      = sequence [ quote each ] sequence
   swap      = sequence sequence [ quote each ]
-  when      = sequence quote each / 'false
-  drop      = --
+  'drop     = sequence sequence [ quote each ] 'drop
+  if        = sequence quote each / 'false
 ] def
 
 = build a range sequence
@@ -49,8 +50,8 @@
   [ 1 - ] 2dip  = b-1 new-seq b
   1 is not      = b-1 new-seq last-iteration?
   '[1,b]i       = b-1 new-seq last-iteration? <recursive-call>
-  when
-  nip
+  'nip
+  if
 ] def
 
 

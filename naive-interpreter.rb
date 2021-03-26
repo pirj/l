@@ -297,8 +297,15 @@ core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
 expressions = [*core_expressions, *program_expressions]
 
+class Stack < Array
+  def pop(*args)
+    raise 'Stack underflow' if args.any? && length < args.first
+    super
+  end
+end
+
 require 'ostruct'
-context = OpenStruct.new(stack: [], scope: scope, expressions: expressions)
+context = OpenStruct.new(stack: Stack.new, scope: scope, expressions: expressions)
 
 while expressions.any?
   expression = expressions.shift
