@@ -10,6 +10,13 @@
 
 = builtin 'when ( condition quote -- )
 
+= ( boolean true-quote false-quote -- )
+'if [
+  pick not swap  = boolean true-quote negated false-quote
+  '2dip curry    = boolean true-quote negated [ false-quote 2dip ]
+  when
+  when
+] def
 
 == Sequences
 

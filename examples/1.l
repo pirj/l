@@ -38,6 +38,8 @@ puts
 = conditionals
 false [ 1 puts ] when       = outputs nothing
 'truthy [ 33 puts ] when    = outputs 33
+false [ fail ] [ 111 puts ] if  = outputs 111
+'truthy [ 100 puts ] [ fail ] if  = outputs 100
 
 = preserving combinators
 1 2 3 '+ dip puts puts
