@@ -18,7 +18,18 @@
   when
 ] def
 
-== Sequences
+== Sequence combinators
+
+= builtin 'tail-head ( sequence -- sequence-or-false value )
+
+= ( sequence -- value sequence-or-false )
+'head-tail [ tail-head swap ] def
+
+= ( sequence quote -- result )
+'reduce [ 'tail-head dip fold ] def
+
+= ( seq value quote ( x y -- z ) -- result )
+'fold [ 'swap dip each ] def
 
 = ( sequence quote -- )
 'each [
@@ -118,11 +129,6 @@
 = builtin 'dip ( x quote -- x )
 
 = builtin '2dip ( x y quote -- x y )
-
-
-== Sequence combinators
-
-= builtin 'tail-head ( sequence -- sequence-or-false value )
 
 
 == Debug
