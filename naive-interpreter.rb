@@ -30,14 +30,15 @@ class AST < Parser
   def next_expression
     case tokens.first
       when /^\=/ # begin of comment
-        Comment.new(tokens).parse
+        Comment.new(tokens).parse # skip
+        next_expression
       when '[' # begin of quote
         QuoteParser.new(tokens).parse
       when /^'/ # begin of single-quote
         SingleQuoteParser.new(tokens).parse
       when /^\d+$/ # integer literal
         NumberParser.new(tokens).parse
-      when /[\w+-\\*\/]+/
+      when /^[\w+-\\*\/\[\],]+$/
         WordParser.new(tokens).parse
       when /\n/
         tokens.shift
@@ -57,16 +58,16 @@ class Comment < Parser
     self
   end
 
-  def inspect
-    "<comment>"
-  end
+  # def inspect
+  #   "<comment>"
+  # end
 
-  def run(context)
-  end
+  # def run(context)
+  # end
 
-  private
+  # private
 
-  attr_reader :comment
+  # attr_reader :comment
 end
 
 class NumberParser < Parser
@@ -106,6 +107,10 @@ class NumberLiteral
 
   def /(other)
     NumberLiteral.new(number / other.number)
+  end
+
+  def eql?(other)
+    number.eql?(other.number)
   end
 
   protected
@@ -273,6 +278,7 @@ def_builtin(scope, 'tail-head') do |stack, _scope|
   stack.push(tail, head)
 end
 def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
+def_builtin(scope, 'quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
 
 FALSE = Word.quoted('false')
 TRUE = Word.quoted('true')

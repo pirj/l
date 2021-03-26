@@ -10,11 +10,47 @@
 
 = builtin 'when ( condition quote -- )
 
-= TODO: rewrite with nip/keep
-= TODO: drop final 'false from stack
-= ( quote -- )
+
+== Sequences
+
+= ( sequence quote -- )
 'each [
-  swap tail-head pick call swap [ each ] curry over swap when
+  swap       = quote sequence
+  tail-head  = quote sequence value
+  pick       = quote sequence value quote
+  call       = quote sequence
+  swap       = sequence quote
+  [ each ]   = sequence quote [ each ]
+  curry      = sequence [ quote each ]
+  over       = sequence [ quote each ] sequence
+  swap       = sequence sequence [ quote each ]
+  when       = sequence quote each / 'false
+  drop       = --
+] def
+
+= build a range sequence
+'[1,b] [  = ( bound -- sequence )
+  [ false ] [1,b]i
+] def
+
+'[1,b]i [  = internal ( index sequence -- prev-index sequence )
+
+= rework to use dip?
+  swap      = seq index
+  1 -       = seq prev-index
+  swap      = prev-index seq
+
+  quote
+
+  2dup      = prev-index seq prev-index seq
+  drop      = prev-index seq prev-index
+  swap      = prev-index prev-index seq
+  curry     = prev-index new-seq
+  over      = prev-index new-seq prev-index
+  1 is not  = prev-index new-seq last-iteration?
+  '[1,b]i   = prev-index new-seq last-iteration? <recursive-call>
+  when
+  nip
 ] def
 
 
@@ -41,6 +77,8 @@
 = builtin 'is ( quote quote -- boolean )
 
 = builtin 'curry ( expression quote -- quote )
+
+= builtin 'quote ( expression -- quote )
 
 
 == Input/output
