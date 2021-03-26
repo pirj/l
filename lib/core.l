@@ -30,25 +30,18 @@
 
 = build a range sequence
 '[1,b] [  = ( bound -- sequence )
-  [ false ] [1,b]i
+  'false [1,b]i
 ] def
 
-'[1,b]i [  = internal ( index sequence -- prev-index sequence )
-
-= rework to use dip?
-  swap      = seq index
-  1 -       = seq prev-index
-  swap      = prev-index seq
-
-  quote
-
-  2dup      = prev-index seq prev-index seq
-  drop      = prev-index seq prev-index
-  swap      = prev-index prev-index seq
-  curry     = prev-index new-seq
-  over      = prev-index new-seq prev-index
-  1 is not  = prev-index new-seq last-iteration?
-  '[1,b]i   = prev-index new-seq last-iteration? <recursive-call>
+'[1,b]i [  = internal ( b sequence -- b-1 sequence-with-b )
+  2dup          = b seq b seq
+  drop          = b seq b
+  swap          = b b seq
+  quote curry   = b new-seq
+  over          = b new-seq b
+  [ 1 - ] 2dip  = b-1 new-seq b
+  1 is not      = b-1 new-seq last-iteration?
+  '[1,b]i       = b-1 new-seq last-iteration? <recursive-call>
   when
   nip
 ] def
