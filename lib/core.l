@@ -55,6 +55,12 @@
 
 = builtin 'dup ( x -- x x )
 
+= builtin '2dup ( x y -- x y x y )
+
+= builtin 'nip ( x y -- y )
+
+= builtin '2nip ( x y z -- z )
+
 = builtin 'over ( x y -- x y x )
 
 = builtin 'pick ( x y z -- x y z x )
@@ -65,6 +71,13 @@
 
 = ( x y -- )
 '2drop [ drop drop ] def
+
+
+== Preserving combinators
+
+= builtin 'dip ( x quote -- x )
+
+= builtin '2dip ( x y quote -- x y )
 
 
 == Sequence combinators

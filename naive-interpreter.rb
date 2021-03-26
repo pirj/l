@@ -36,7 +36,7 @@ class AST < Parser
       when /^'/ # begin of single-quote
         SingleQuoteParser.new(tokens).parse
       when /^\d+$/ # integer literal
-        NumberLiteral.new(tokens).parse
+        NumberParser.new(tokens).parse
       when /[\w+-\\*\/]+/
         WordParser.new(tokens).parse
       when /\n/
@@ -69,14 +69,19 @@ class Comment < Parser
   attr_reader :comment
 end
 
-class NumberLiteral < Parser
+class NumberParser < Parser
   def parse
-    @number = Integer(tokens.shift)
-    self
+    NumberLiteral.new(tokens.shift)
+  end
+end
+
+class NumberLiteral
+  def initialize(number)
+    @number = Integer(number)
   end
 
   def inspect
-    @number.to_s
+    number.to_s
   end
 
   def to_s
@@ -84,8 +89,28 @@ class NumberLiteral < Parser
   end
 
   def run(context)
-    context.stack.push(@number)
+    context.stack.push(self)
   end
+
+  def +(other)
+    NumberLiteral.new(number + other.number)
+  end
+
+  def -(other)
+    NumberLiteral.new(number - other.number)
+  end
+
+  def *(other)
+    NumberLiteral.new(number * other.number)
+  end
+
+  def /(other)
+    NumberLiteral.new(number / other.number)
+  end
+
+  protected
+
+  attr_reader :number
 end
 
 class QuoteParser < AST
@@ -232,6 +257,9 @@ def_builtin(scope, 'def')  { |stack, scope| quote = stack.pop; quoted_word = sta
 def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
 
 def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
+def_builtin(scope, '2dup') { |stack| stack.push(*stack.last(2)) }
+def_builtin(scope, 'nip')  { |stack| stack.push(stack.pop(2).last) }
+def_builtin(scope, '2nip') { |stack| stack.push(stack.pop(3).last) }
 def_builtin(scope, 'drop') { |stack| stack.pop }
 def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
@@ -250,6 +278,9 @@ TRUE = Word.quoted('true')
 def_builtin(scope, 'is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
 def_builtin(scope, 'not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
 def_builtin(scope, 'when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
+
+def_builtin(scope, 'dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
+def_builtin(scope, '2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
 
 core_expressions = expressions_from_file('lib/core.l')
 program_expressions = expressions_from_file(ARGV.first)
