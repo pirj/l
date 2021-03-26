@@ -15,17 +15,17 @@
 
 = ( sequence quote -- )
 'each [
-  swap       = quote sequence
-  tail-head  = quote sequence value
-  pick       = quote sequence value quote
-  call       = quote sequence
-  swap       = sequence quote
-  [ each ]   = sequence quote [ each ]
-  curry      = sequence [ quote each ]
-  over       = sequence [ quote each ] sequence
-  swap       = sequence sequence [ quote each ]
-  when       = sequence quote each / 'false
-  drop       = --
+  'tail-head
+  dip       = sequence value quote
+  swap      = sequence quote value
+  over      = sequence quote value quote
+  call      = sequence quote
+  [ each ]  = sequence quote [ each ]
+  curry     = sequence [ quote each ]
+  over      = sequence [ quote each ] sequence
+  swap      = sequence sequence [ quote each ]
+  when      = sequence quote each / 'false
+  drop      = --
 ] def
 
 = build a range sequence
