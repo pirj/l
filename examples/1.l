@@ -45,3 +45,9 @@ false [ 1 puts ] when       = outputs nothing
 
 1 1 3 5 '+ 2dip puts puts puts
 = outputs 5 3 2
+
+1 2 over puts puts puts
+= outputs 1 2 1
+
+2 3 4 2over puts puts puts puts puts
+= outputs 3 2 4 3 2

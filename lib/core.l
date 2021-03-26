@@ -60,6 +60,8 @@
 
 = builtin 'over ( x y -- x y x )
 
+= builtin '2over ( x y z -- x y z x y)
+
 = builtin 'pick ( x y z -- x y z x )
 
 = builtin 'drop ( x -- )

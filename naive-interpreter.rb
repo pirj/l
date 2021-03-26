@@ -262,6 +262,7 @@ def_builtin(scope, 'nip')  { |stack| stack.push(stack.pop(2).last) }
 def_builtin(scope, '2nip') { |stack| stack.push(stack.pop(3).last) }
 def_builtin(scope, 'drop') { |stack| stack.pop }
 def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
+def_builtin(scope, '2over') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a, b) }
 def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 
