@@ -145,3 +145,39 @@ if it's not computationally expensive, e.g. `100 [1,b]`, it might be dynamic and
 memoizable isn't mutually exclusive with dynamic
 
 sometimes prompt (immediate) output is more important that the overall processing speed, e.g. screen output
+
+
+## Interesing links
+
+motivating checklist
+https://drewdevault.com/2020/12/25/How-to-design-a-new-programming-language.html
+
+design criteria http://jcsites.juniata.edu/faculty/rhodes/lt/plcriteria.htm
+
+book https://www.researchgate.net/publication/220692467_Advanced_programming_language_design
+
+more on homoiconicity
+https://docs.racket-lang.org/htdp-langs/intermediate.html#%28def._htdp-intermediate._%28%28lib._lang%2Fhtdp-intermediate..rkt%29._list%29%29
+
+parsing words :point_up: code is just code, not needed to be
+immediately represented as data on the stack
+
+racket syntax https://docs.racket-lang.org/htdp-langs/advanced.html
+simple: https://docs.racket-lang.org/htdp-langs/index.html
+
+rant http://tomasp.net/blog/2017/design-side-of-pl/
+
+https://medium.com/coinmonks/the-organized-chaos-of-programming-language-design-1e0a95067afb
+
+https://en.wikipedia.org/wiki/Programming_language_theory
+
+https://en.wikipedia.org/wiki/Lambda_calculus
+
+Write compiler in Zig https://ziglang.org/
+
+https://docs.racket-lang.org/eopl/index.html
+
+a random language design decisions http://www.zimbu.org/design/goals
+another http://ducklang.org/designing-a-programming-language-i
+
+book https://www.amazon.com/Programming-Language-Design-Concepts-David/dp/0470853204
