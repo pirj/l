@@ -95,7 +95,13 @@
 
 = builtin 'is ( quote quote -- boolean )
 
-= builtin 'curry ( expression quote -- quote )
+= builtin 'curry ( expression quote -- curried-quote )
+
+= ( expression expression quote -- curried-quote )
+'2curry [ curry curry ] def
+
+= ( expression expression expression quote -- curried-quote )
+'3curry [ curry curry curry ] def
 
 = builtin 'quote ( expression -- quote )
 
