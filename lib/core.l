@@ -20,10 +20,10 @@
 
 == Sequence combinators
 
-= builtin 'tail-head ( sequence -- sequence-or-false value )
+= builtin 'head-tail ( sequence -- value sequence-or-false )
 
-= ( sequence -- value sequence-or-false )
-'head-tail [ tail-head swap ] def
+= ( sequence -- sequence-or-false value )
+'tail-head [ head-tail swap ] def
 
 = ( sequence quote -- result )
 'reduce [ 'tail-head dip fold ] def
@@ -62,6 +62,15 @@
   1 is not      = b-1 new-seq last-iteration?
   '[1,b]i       = b-1 new-seq last-iteration? <recursive-call>
   'nip
+  if
+] def
+
+= ( sequence index -- value )
+'nth [
+  'tail-head dip     = seq value index
+  dup 1 is           = seq value index last?
+  [ drop nip ]
+  [ 1 - nip nth ]
   if
 ] def
 

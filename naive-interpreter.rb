@@ -272,11 +272,14 @@ def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c,
 def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 def_builtin(scope, '2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }
 
-def_builtin(scope, 'tail-head') do |stack, _scope|
+def_builtin(scope, 'head-tail') do |stack, scope, expressions|
   quote = stack.pop
   raise 'Sequence has to be composed of two parts, head and tail' unless quote.two?
   head, tail = *quote.expressions
-  stack.push(tail, head)
+  # TODO: rework to just pass the context everywhere
+  context = OpenStruct.new(stack: stack, scope: scope, expressions: expressions)
+  head.run(context)
+  tail.run(context)
 end
 def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
 def_builtin(scope, 'quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
