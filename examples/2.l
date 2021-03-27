@@ -11,15 +11,15 @@
 '3each [       = oh, inline comments work!
   swap         = ( sequence quote -- quote sequence )
 
-  tail-head    = ( sequence -- sequence-or-false value )
+  head-tail swap  = ( sequence -- sequence-or-false value )
   pick         = ( quote sequence-or-false value -- quote sequence-or-false value quote )
   call         = evaluates quote ( quote -- ? )
 
-  tail-head    = ( sequence -- sequence-or-false value )
+  head-tail swap  = ( sequence -- sequence-or-false value )
   pick         = ( quote sequence-or-false value -- quote sequence-or-false value quote )
   call         = evaluates quote ( quote -- ? )
 
-  tail-head    = ( sequence -- false value )
+  head-tail swap  = ( sequence -- sequence-or-false value )
   pick         = ( quote false value -- quote false value quote )
   call         = evaluates quote ( quote -- ? )
 

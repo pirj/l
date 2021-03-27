@@ -20,20 +20,18 @@
 
 == Sequence combinators
 
-= builtin 'head-tail ( sequence -- value sequence-or-false )
-
-= ( sequence -- sequence-or-false value )
-'tail-head [ head-tail swap ] def
+= ( sequence -- value-or-values sequence-or-false )
+'head-tail [ call ] def
 
 = ( sequence quote -- result )
-'reduce [ 'tail-head dip fold ] def
+'reduce [ [ head-tail swap ] dip fold ] def
 
 = ( seq value quote ( x y -- z ) -- result )
 'fold [ 'swap dip each ] def
 
 = ( sequence quote -- )
 'each [
-  'tail-head
+  [ head-tail swap ]
   dip       = sequence value quote
   swap      = sequence quote value
   over      = sequence quote value quote
@@ -67,7 +65,7 @@
 
 = ( sequence index -- value )
 'nth [
-  'tail-head dip     = seq value index
+  [ head-tail swap ] dip     = seq value index
   dup 1 is           = seq value index last?
   [ drop nip ]
   [ 1 - nip nth ]
