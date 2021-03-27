@@ -181,3 +181,7 @@ a random language design decisions http://www.zimbu.org/design/goals
 another http://ducklang.org/designing-a-programming-language-i
 
 book https://www.amazon.com/Programming-Language-Design-Concepts-David/dp/0470853204
+
+https://esolangs.org
+
+The Theory of Concatenative Combinators https://web.archive.org/web/20180324230846/https://tunes.org/~iepos/joy.html
