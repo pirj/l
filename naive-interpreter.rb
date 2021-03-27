@@ -57,17 +57,6 @@ class Comment < Parser
     @comment = parts.join(' ')
     self
   end
-
-  # def inspect
-  #   "<comment>"
-  # end
-
-  # def run(context)
-  # end
-
-  # private
-
-  # attr_reader :comment
 end
 
 class NumberParser < Parser
@@ -89,8 +78,8 @@ class NumberLiteral
     inspect
   end
 
-  def run(context)
-    context.stack.push(self)
+  def run(stack, *)
+    stack.push(self)
   end
 
   def +(other)
@@ -159,12 +148,12 @@ class Quote
     inspect
   end
 
-  def run(context)
-    context.stack.push(self)
+  def run(stack, *)
+    stack.push(self)
   end
 
-  def call(context)
-    context.expressions.unshift(*exprs)
+  def call(_stack, _scope, expressions)
+    expressions.unshift(*exprs)
   end
 
   def eql?(other)
@@ -198,9 +187,9 @@ class Word
     Quote.new(new(word))
   end
 
-  def run(context)
-    quote = context.scope.fetch(Quote.new(self))
-    quote.call(context)
+  def run(stack, scope, expressions)
+    quote = scope.fetch(Quote.new(self))
+    quote.call(stack, scope, expressions)
   end
 
   def inspect
@@ -225,8 +214,8 @@ class Builtin
     @implementation = block
   end
 
-  def call(context)
-    @implementation.call(context.stack, context.scope, context.expressions)
+  def call(stack, scope, expressions)
+    @implementation.call(stack, scope, expressions)
   end
 
   def inspect
@@ -276,10 +265,8 @@ def_builtin(scope, 'head-tail') do |stack, scope, expressions|
   quote = stack.pop
   raise 'Sequence has to be composed of two parts, head and tail' unless quote.two?
   head, tail = *quote.expressions
-  # TODO: rework to just pass the context everywhere
-  context = OpenStruct.new(stack: stack, scope: scope, expressions: expressions)
-  head.run(context)
-  tail.run(context)
+  head.run(stack, scope, expressions)
+  tail.run(stack, scope, expressions)
 end
 def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
 def_builtin(scope, 'quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
@@ -308,14 +295,13 @@ class Stack < Array
   end
 end
 
-require 'ostruct'
-context = OpenStruct.new(stack: Stack.new, scope: scope, expressions: expressions)
+stack = Stack.new
 
 while expressions.any?
   expression = expressions.shift
   warn "-- <#{expression.inspect}> #{expressions.map(&:inspect).join(' ')}" if ENV['DEBUG']
-  warn " -: #{context.stack.join(' ')}\n\n" if ENV['DEBUG']
-  expression.run(context)
+  warn " -: #{stack.join(' ')}\n\n" if ENV['DEBUG']
+  expression.run(stack, scope, expressions)
 end
 
-warn "Program left with a non-empty stack: #{context.stack}" unless context.stack.empty?
+warn "Program left with a non-empty stack: #{stack}" unless stack.empty?
