@@ -251,7 +251,6 @@ def_builtin(scope, 'def')  { |stack, scope| quote = stack.pop; quoted_word = sta
 def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
 
 def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
-def_builtin(scope, '2dup') { |stack| stack.push(*stack.last(2)) }
 def_builtin(scope, 'nip')  { |stack| stack.push(stack.pop(2).last) }
 def_builtin(scope, '2nip') { |stack| stack.push(stack.pop(3).last) }
 def_builtin(scope, 'drop') { |stack| stack.pop }

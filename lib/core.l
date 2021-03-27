@@ -109,7 +109,11 @@
 
 = builtin 'dup ( x -- x x )
 
-= builtin '2dup ( x y -- x y x y )
+= ( x y -- x y x y )
+'2dup [ over over ] def
+
+= ( x y z -- x y z x y z )
+'3dup [ pick pick pick ] def
 
 = builtin 'nip ( x y -- y )
 
