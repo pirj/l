@@ -1,9 +1,6 @@
-'sequence use
+[ sequence test ] use
 
 = build lazy (potentially infinite) dynamic sequences
-
-10 [1,b] 3 nth puts
-= outputs, ergh...3
 
 'linear-sequence [  = ( -- sequence )
   [ 1 next-linear ]
@@ -14,7 +11,8 @@
   curry                 = number [ next-number next-linear ]
 ] def
 
-linear-sequence 5 nth puts
+linear-sequence 5 nth 5 is assert
+
 
 'monotonic-sequence [  = ( -- sequence )
   [ 100 next-monotonic ]
@@ -25,5 +23,5 @@ linear-sequence 5 nth puts
   curry                = number [ number next-monotonic ]
 ] def
 
-monotonic-sequence 10 nth puts
-= they are all the same, outputs 100
+monotonic-sequence 10 nth 100 is assert
+= they are all the same

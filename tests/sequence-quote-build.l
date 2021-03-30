@@ -1,6 +1,6 @@
-'sequence use
+[ sequence test ] use
 
-= building arbitrary sequences given a quote
+= build arbitrary sequences given a quote
 
 'linear-sequence [  = ( -- sequence )
   [ 1 [ 1 + ] next ]
@@ -12,8 +12,7 @@
   'next 2curry  = value [ next-value quote next ]
 ] def
 
-linear-sequence 5 nth puts
-= outputs 5
+linear-sequence 5 nth 5 is assert
 
 
 'next-with-index [  = ( index value quote -- value sequence )
@@ -28,8 +27,8 @@ linear-sequence 5 nth puts
   [ 2 1 '* next-with-index ]
 ] def
 
-factorial-sequence 7 nth puts
-= outputs 5040 (well, you can't call it as `0 nth`, the sequence starts with its first element which is for factorial(1))
+factorial-sequence 7 nth 5040 is assert
+= well, you can't call it as `0 nth`, the sequence starts with its first element which is for factorial(1)
 
 
 'next-with-previous [  = ( previous-value value quote -- value sequence )
@@ -44,5 +43,5 @@ factorial-sequence 7 nth puts
   [ 0 1 '+ next-with-previous ]
 ] def
 
-fibonacci-sequence 10 nth puts
-= outputs 55 (again, the sequence starts with first element = 1, not 0). But the initial value of the sequence is set to 0
+fibonacci-sequence 10 nth 55 is assert
+= Again, the sequence starts with first element = 1, not 0. But the initial value of the sequence is set to 0

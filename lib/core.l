@@ -1,7 +1,8 @@
 == Program
 
-= builting 'use ( filename -- )
+= builting 'use ( filenames -- )
 
+= builting 'load ( filenames -- )
 
 == Logic
 

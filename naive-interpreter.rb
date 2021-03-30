@@ -248,9 +248,11 @@ end
 class Runner
   def initialize
     @scope = {}
+    @dir_stack = []
   end
 
   def run(filename)
+    @dir_stack.push(File.dirname(filename))
     stack = Stack.new
 
     expressions = expressions_from_file(filename)
@@ -263,10 +265,15 @@ class Runner
     end
 
     warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
+    @dir_stack.pop
   end
 
   def def_builtin(name, &block)
     @scope[Word.quoted(name)] = Builtin.new(&block)
+  end
+
+  def pwd
+    @dir_stack.last
   end
 end
 
@@ -305,9 +312,10 @@ runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); st
 runner.def_builtin('2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
 
 runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
-runner.def_builtin('fail') { fail }
+runner.def_builtin('fail') { |stack| failure_message = stack.pop.expressions; fail failure_message.to_a.to_s }
 
 runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.run("lib/#{filename}.l") } }
+runner.def_builtin('load') { |stack| stack.pop.expressions.each { |filename| runner.run("#{runner.pwd}/#{filename}.l") } }
 
 runner.run('lib/core.l')
 runner.run(ARGV.first)
