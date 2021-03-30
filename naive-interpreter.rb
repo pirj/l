@@ -196,6 +196,10 @@ class Word
     word.to_s
   end
 
+  def to_s
+    word.to_s
+  end
+
   def hash
     word.hash
   end
@@ -301,6 +305,8 @@ runner.def_builtin('2dip') { |stack, _, expressions| x, y, quote = stack.pop(3);
 
 runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
 runner.def_builtin('fail') { fail }
+
+runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.run("lib/#{filename}.l") } }
 
 runner.run('lib/core.l')
 runner.run(ARGV.first)

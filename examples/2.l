@@ -1,3 +1,5 @@
+'sequence use
+
 = code as data
 
 = a specific version of [1,b] and [a,b]

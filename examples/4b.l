@@ -1,3 +1,5 @@
+'sequence use
+
 = building arbitrary sequences given a quote
 
 'linear-sequence [  = ( -- sequence )

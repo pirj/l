@@ -1,3 +1,5 @@
+'sequence use
+
 = build lazy (potentially infinite) dynamic sequences
 
 10 [1,b] 3 nth puts

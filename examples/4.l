@@ -1,3 +1,5 @@
+'sequence use
+
 4 [1,b] 0 '+ fold puts
 = outputs 0 + 1 + 2 + 3 + 4 = 10
 
