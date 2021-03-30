@@ -5,8 +5,8 @@
 ] def
 
 'next [  = ( value quote -- value sequence )
-  2dup          = value quote value quote
-  call swap     = value next-value quote
+  2dup call     = value quote next-value
+  swap          = value next-value quote
   'next 2curry  = value [ next-value quote next ]
 ] def
 
