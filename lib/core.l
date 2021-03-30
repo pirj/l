@@ -18,6 +18,15 @@
   when
 ] def
 
+= ( quote times -- )
+'times [
+  over             = quote times quote
+  'call 2dip swap  = quote times
+  1 - dup 0 is     = quote times-less last?
+  '2drop 'times if
+] def
+
+
 == Sequence combinators
 
 = ( sequence -- value-or-values sequence-or-false )
