@@ -233,52 +233,6 @@ def expressions_from_file(filename)
   AST.new(tokens).parse
 end
 
-# builtins
-def def_builtin(scope, name, &block)
-  scope[Word.quoted(name)] = Builtin.new(&block)
-end
-
-scope = {}
-
-def_builtin(scope, 'puts') { |stack| puts stack.pop }
-
-def_builtin(scope, '+')    { |stack| stack.push(stack.pop + stack.pop) }
-def_builtin(scope, '-')    { |stack| x, y = stack.pop(2); stack.push(x - y) }
-def_builtin(scope, '*')    { |stack| stack.push(stack.pop * stack.pop) }
-def_builtin(scope, '/')    { |stack| x, y = stack.pop(2); stack.push(x / y) }
-
-def_builtin(scope, 'def')  { |stack, scope| quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
-def_builtin(scope, 'call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
-
-def_builtin(scope, 'dup')  { |stack| stack.push(stack.last) }
-def_builtin(scope, 'nip')  { |stack| stack.push(stack.pop(2).last) }
-def_builtin(scope, '2nip') { |stack| stack.push(stack.pop(3).last) }
-def_builtin(scope, 'drop') { |stack| stack.pop }
-def_builtin(scope, 'over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
-def_builtin(scope, '2over') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a, b) }
-def_builtin(scope, 'pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
-def_builtin(scope, 'swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
-def_builtin(scope, '2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }
-
-def_builtin(scope, 'curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
-def_builtin(scope, 'quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
-
-FALSE = Word.quoted('false')
-TRUE = Word.quoted('true')
-def_builtin(scope, 'is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
-def_builtin(scope, 'not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
-def_builtin(scope, 'when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
-
-def_builtin(scope, 'dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
-def_builtin(scope, '2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
-
-def_builtin(scope, 'debug') { |stack, scope, expressions| require 'pry'; binding.pry }
-def_builtin(scope, 'fail') { fail }
-
-core_expressions = expressions_from_file('lib/core.l')
-program_expressions = expressions_from_file(ARGV.first)
-expressions = [*core_expressions, *program_expressions]
-
 class Stack < Array
   def pop(*args)
     items = args.any? ? args.first : 1
@@ -287,13 +241,66 @@ class Stack < Array
   end
 end
 
-stack = Stack.new
+class Runner
+  def initialize
+    @stack = Stack.new
+    @scope = {}
+  end
 
-while expressions.any?
-  expression = expressions.shift
-  warn "-- <#{expression.inspect}> #{expressions.map(&:inspect).join(' ')}" if ENV['DEBUG']
-  warn " -: #{stack.join(' ')}\n\n" if ENV['DEBUG']
-  expression.run(stack, scope, expressions)
+  def run(filename)
+    expressions = expressions_from_file(filename)
+
+    while expressions.any?
+      expression = expressions.shift
+      warn "-- <#{expression.inspect}> #{expressions.map(&:inspect).join(' ')}" if ENV['DEBUG']
+      warn " -: #{@stack.join(' ')}\n\n" if ENV['DEBUG']
+      expression.run(@stack, @scope, expressions)
+    end
+
+    warn "#{filename} left with a non-empty stack: #{@stack}" unless @stack.empty?
+  end
+
+  def def_builtin(name, &block)
+    @scope[Word.quoted(name)] = Builtin.new(&block)
+  end
 end
 
-warn "Program left with a non-empty stack: #{stack}" unless stack.empty?
+runner = Runner.new
+
+runner.def_builtin('puts') { |stack| puts stack.pop }
+
+runner.def_builtin('+')    { |stack| stack.push(stack.pop + stack.pop) }
+runner.def_builtin('-')    { |stack| x, y = stack.pop(2); stack.push(x - y) }
+runner.def_builtin('*')    { |stack| stack.push(stack.pop * stack.pop) }
+runner.def_builtin('/')    { |stack| x, y = stack.pop(2); stack.push(x / y) }
+
+runner.def_builtin('def')  { |stack, scope| quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
+runner.def_builtin('call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
+
+runner.def_builtin('dup')  { |stack| stack.push(stack.last) }
+runner.def_builtin('nip')  { |stack| stack.push(stack.pop(2).last) }
+runner.def_builtin('2nip') { |stack| stack.push(stack.pop(3).last) }
+runner.def_builtin('drop') { |stack| stack.pop }
+runner.def_builtin('over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
+runner.def_builtin('2over') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a, b) }
+runner.def_builtin('pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
+runner.def_builtin('swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
+runner.def_builtin('2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }
+
+runner.def_builtin('curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
+runner.def_builtin('quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
+
+FALSE = Word.quoted('false')
+TRUE = Word.quoted('true')
+runner.def_builtin('is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
+runner.def_builtin('not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
+runner.def_builtin('when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
+
+runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
+runner.def_builtin('2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
+
+runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
+runner.def_builtin('fail') { fail }
+
+runner.run('lib/core.l')
+runner.run(ARGV.first)
