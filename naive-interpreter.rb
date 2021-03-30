@@ -247,21 +247,22 @@ end
 
 class Runner
   def initialize
-    @stack = Stack.new
     @scope = {}
   end
 
   def run(filename)
+    stack = Stack.new
+
     expressions = expressions_from_file(filename)
 
     while expressions.any?
       expression = expressions.shift
       warn "-- <#{expression.inspect}> #{expressions.map(&:inspect).join(' ')}" if ENV['DEBUG']
-      warn " -: #{@stack.join(' ')}\n\n" if ENV['DEBUG']
-      expression.run(@stack, @scope, expressions)
+      warn " -: #{stack.join(' ')}\n\n" if ENV['DEBUG']
+      expression.run(stack, @scope, expressions)
     end
 
-    warn "#{filename} left with a non-empty stack: #{@stack}" unless @stack.empty?
+    warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
   end
 
   def def_builtin(name, &block)
