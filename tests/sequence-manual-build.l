@@ -11,7 +11,7 @@
   curry                 = number [ next-number next-linear ]
 ] def
 
-linear-sequence 5 nth 5 is assert
+linear-sequence 5 nth 5 assert-is
 
 
 'monotonic-sequence [  = ( -- sequence )
@@ -23,5 +23,5 @@ linear-sequence 5 nth 5 is assert
   curry                = number [ number next-monotonic ]
 ] def
 
-monotonic-sequence 10 nth 100 is assert
+monotonic-sequence 10 nth 100 assert-is
 = they are all the same

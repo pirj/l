@@ -1,21 +1,21 @@
 'test use
 
-'false 'false is assert
-'false false is assert
+'false 'false assert-is
+'false false assert-is
 
-'false 'true is not assert
-'true 'false is not assert
-'false 'ubiquitous is not assert
-'true 'ubiquitous is not assert
+'false 'true assert-is-not
+'true 'false assert-is-not
+'false 'ubiquitous assert-is-not
+'true 'ubiquitous assert-is-not
+'true 'true assert-is
 
-'true not not assert
+'true not not 'true assert-is
+'false not 'true assert-is
 
-'false not assert
+[ 1 2 ] [ 1 2 ] assert-is
+[ 1 ] [ 1 ] assert-is
+[ 1 ] [ 33 ] assert-is-not
+[ 1 2 ] [ 1 1 ] assert-is-not
 
-[ 1 2 ] [ 1 2 ] is assert
-[ 1 ] [ 1 ] is assert
-[ 1 ] [ 33 ] is not assert
-[ 1 2 ] [ 1 1 ] is not assert
-
-[ 'a 'b ] [ 'a 'b ] is assert
-[ 'a 'b ] [ 'a 'c ] is not assert
+[ 'a 'b ] [ 'a 'b ] assert-is
+[ 'a 'b ] [ 'a 'c ] assert-is-not

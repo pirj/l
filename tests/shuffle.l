@@ -3,7 +3,7 @@
 = stack shuffling
 
 = drop the last two
-1 2 3 2drop 1 is assert
+1 2 3 2drop 1 assert-is
 
 1 2 over puts puts puts
 = outputs 1 2 1
