@@ -19,3 +19,6 @@
 
 [ 'a 'b ] [ 'a 'b ] assert-is
 [ 'a 'b ] [ 'a 'c ] assert-is-not
+
+"foo" "foo" assert-is
+"foo" "bar" assert-is-not

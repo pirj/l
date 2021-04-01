@@ -11,6 +11,7 @@
   sequence-nth
   sequence-quote-build
   shuffle
+  string-literal
   range
 ] load
 

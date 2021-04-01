@@ -44,9 +44,6 @@ nix: file:open file:read file:write file:close
 
 # parser
 
-https://github.com/dryruby/ebnf#parsing-an-ebnf-grammar
-https://github.com/cjheath/treetop
-https://github.com/floraison/raabro
 www.vpri.org/pdf/tr2010003_PEG.pdf source->ast->pseudo->machine
 
 # interpreter (ruby)? jit (which vm)?

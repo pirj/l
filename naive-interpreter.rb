@@ -29,18 +29,17 @@ class AST < Parser
 
   def next_expression
     case tokens.first
-      when /^\=/ # begin of comment
-        Comment.new(tokens).parse # skip
-        next_expression
       when '[' # begin of quote
         QuoteParser.new(tokens).parse
       when /^'/ # begin of single-quote
-        SingleQuoteParser.new(tokens).parse
+       SingleQuoteParser.new(tokens).parse
+      when /^"/ # begin of single-quote
+       StringLiteral.new(tokens.shift[1..-1])
       when /^\d+$/ # integer literal
         NumberParser.new(tokens).parse
       when /^[\w+-\\*\/\[\],]+$/
         WordParser.new(tokens).parse
-      when /\n/
+      when ''
         tokens.shift
         nil
       else
@@ -50,13 +49,30 @@ class AST < Parser
   end
 end
 
-class Comment < Parser
-  def parse
-    parts = tokens.take_while { |token| token != "\n" }
-    parts.count.times { tokens.shift }
-    @comment = parts.join(' ')
-    self
+class StringLiteral
+  def initialize(string)
+    @string = string.freeze
   end
+
+  def inspect
+    string
+  end
+
+  def to_s
+    inspect
+  end
+
+  def run(stack, *)
+    stack.push(self)
+  end
+
+  def eql?(other)
+    string.eql?(other.string)
+  end
+
+  protected
+
+  attr_reader :string
 end
 
 class NumberParser < Parser
@@ -227,13 +243,33 @@ class Builtin
   end
 end
 
+module Lexer
+  class << self
+    def lex(source)
+      tokens = []
+      rest = source
+      while !rest.empty?
+        token, separator, rest = rest.partition(/\s*[=]+\s*|"|\s+/)
+
+        case separator.strip
+        when /^=/
+          tokens << token
+          _, _, rest = rest.partition(/\n+\s*/) # skip until EOL
+        when /^"/
+          token, _, rest = rest.partition(/"/) # take until closing "
+          tokens << "\"#{token}"
+        else
+          tokens << token
+        end
+      end
+      tokens
+    end
+  end
+end
+
 def expressions_from_file(filename)
   source = File.read(filename)
-
-  # lexer: include the freaking newlines (just too hard for me with regex)
-  tokens = source.lines(chomp: true).map(&:split).zip(["\n"].cycle).flatten
-
-  # parser
+  tokens = Lexer.lex(source)
   AST.new(tokens).parse
 end
 
@@ -312,7 +348,7 @@ runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); st
 runner.def_builtin('2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
 
 runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
-runner.def_builtin('fail') { |stack| failure_message = stack.pop.expressions; fail failure_message.to_a.to_s }
+runner.def_builtin('fail') { |stack| failure_message = stack.pop; fail failure_message.to_s }
 
 runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.run("lib/#{filename}.l") } }
 runner.def_builtin('load') { |stack| stack.pop.expressions.each { |filename| runner.run("#{runner.pwd}/#{filename}.l") } }
