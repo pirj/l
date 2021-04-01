@@ -9,7 +9,7 @@
 'next [  = ( value quote -- value sequence )
   2dup call     = value quote next-value
   swap          = value next-value quote
-  'next 2curry  = value [ next-value quote next ]
+  'next 'curry 2 times  = value [ next-value quote next ]
 ] def
 
 linear-sequence 5 nth 5 assert-is
@@ -19,7 +19,7 @@ linear-sequence 5 nth 5 assert-is
   3dup call                = index value quote next-value
   [ swap 1 + ] 2dip        = value next-index quote next-value
   swap                     = value next-index next-value quote
-  'next-with-index 3curry  = value [ next-index next-value quote next ]
+  'next-with-index 'curry 3 times  = value [ next-index next-value quote next ]
 ] def
 
 = factorial(n) = n * factorial(n-1), 1 1 2 6 24 120 720 5040
@@ -35,7 +35,7 @@ factorial-sequence 7 nth 5040 assert-is
   3dup call                   = previous-value value quote next-value
   [ nip dup ] 2dip            = value value quote next-value
   swap                        = value value next-value quote
-  'next-with-previous 3curry  = value [ value next-value quote next ]
+  'next-with-previous 'curry 3 times  = value [ value next-value quote next ]
 ] def
 
 = fib(n) = fib(n-1) + fib(n-2), 1 1 2 3 5 8 13 21 34 55

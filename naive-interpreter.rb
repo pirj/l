@@ -327,10 +327,8 @@ runner.def_builtin('call') { |stack, _, expressions| quote = stack.pop; expressi
 
 runner.def_builtin('dup')  { |stack| stack.push(stack.last) }
 runner.def_builtin('nip')  { |stack| stack.push(stack.pop(2).last) }
-runner.def_builtin('2nip') { |stack| stack.push(stack.pop(3).last) }
 runner.def_builtin('drop') { |stack| stack.pop }
 runner.def_builtin('over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
-runner.def_builtin('2over') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a, b) }
 runner.def_builtin('pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 runner.def_builtin('swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 runner.def_builtin('2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }

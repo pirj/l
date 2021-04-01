@@ -46,12 +46,6 @@
 
 = builtin 'curry ( expression quote -- curried-quote )
 
-= ( expression expression quote -- curried-quote )
-'2curry [ curry curry ] def
-
-= ( expression expression expression quote -- curried-quote )
-'3curry [ curry curry curry ] def
-
 = builtin 'quote ( expression -- quote )
 
 
@@ -67,11 +61,7 @@
 
 = builtin 'nip ( x y -- y )
 
-= builtin '2nip ( x y z -- z )
-
 = builtin 'over ( x y -- x y x )
-
-= builtin '2over ( x y z -- x y z x y)
 
 = builtin 'pick ( x y z -- x y z x )
 

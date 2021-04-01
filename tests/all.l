@@ -5,6 +5,7 @@
   equality
   function
   math
+  preserving
   sequence-fold
   sequence-literal
   sequence-manual-build
