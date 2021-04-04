@@ -326,12 +326,8 @@ runner.def_builtin('def')  { |stack, scope| quote = stack.pop; quoted_word = sta
 runner.def_builtin('call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
 
 runner.def_builtin('dup')  { |stack| stack.push(stack.last) }
-runner.def_builtin('nip')  { |stack| stack.push(stack.pop(2).last) }
 runner.def_builtin('drop') { |stack| stack.pop }
-runner.def_builtin('over') { |stack| a, b = stack.pop(2); stack.push(a, b, a) }
-runner.def_builtin('pick') { |stack| a, b, c = stack.pop(3); stack.push(a, b, c, a) }
 runner.def_builtin('swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
-runner.def_builtin('2swap') { |stack| a, b, c, d = stack.pop(4); stack.push(c, d, a, b) }
 
 runner.def_builtin('curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
 runner.def_builtin('quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
@@ -339,11 +335,9 @@ runner.def_builtin('quote') { |stack| expression = stack.pop; stack.push(Quote.n
 FALSE = Word.quoted('false')
 TRUE = Word.quoted('true')
 runner.def_builtin('is')   { |stack| stack.push(stack.pop.eql?(stack.pop) ? TRUE : FALSE) }
-runner.def_builtin('not')  { |stack| stack.push(stack.pop.eql?(FALSE) ? TRUE : FALSE) }
 runner.def_builtin('when') { |stack, _, expressions| condition, quote = stack.pop(2); expressions.unshift(*quote.expressions) unless condition.eql?(FALSE) }
 
 runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
-runner.def_builtin('2dip') { |stack, _, expressions| x, y, quote = stack.pop(3); stack.push(quote); expressions.unshift(Word.new('call'), x, y) }
 
 runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
 runner.def_builtin('fail') { |stack| failure_message = stack.pop; fail failure_message.to_s }

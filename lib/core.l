@@ -4,15 +4,14 @@
 
 = builting 'load ( filenames -- )
 
+
 == Logic
 
 = false returns itself
 'false [ 'false ] def
 
-= ( condition -- is-false )
-'false? [ 'false is ] def
-
-= builtin 'not ( boolean -- inverse )
+= ( boolean -- inverse )
+'not [ 'false is ] def
 
 = builtin 'when ( condition quote -- )
 
@@ -53,23 +52,31 @@
 
 = builtin 'dup ( x -- x x )
 
+= builtin 'drop ( x -- )
+
+= builtin 'swap ( x y -- y x )
+
 = ( x y -- x y x y )
 '2dup [ over over ] def
 
 = ( x y z -- x y z x y z )
 '3dup [ pick pick pick ] def
 
-= builtin 'nip ( x y -- y )
+= ( x y -- y )
+'nip [ 'drop dip ] def
 
-= builtin 'over ( x y -- x y x )
+= ( x y -- x y x )
+'over [ 'dup dip swap ] def
 
-= builtin 'pick ( x y z -- x y z x )
+= ( x y z -- x y z x )
+'pick [ 'dup 2dip 'swap dip swap ] def
 
-= builtin 'drop ( x -- )
-
-= builtin 'swap ( x y -- y x )
-
-= builtin '2swap ( a b c d -- c d a b )
+= ( a b c d -- c d a b )
+'2swap [ 'swap dip  = a c b d
+  'swap 2dip        = c a b d
+  swap              = c a d b
+  'swap dip         = a b c d
+] def
 
 = ( x y -- )
 '2drop [ drop drop ] def
@@ -79,4 +86,5 @@
 
 = builtin 'dip ( x quote -- x )
 
-= builtin '2dip ( x y quote -- x y )
+= ( x y quote -- x y )
+'2dip [ [ dip ] curry dip ] def
