@@ -267,12 +267,6 @@ module Lexer
   end
 end
 
-def expressions_from_file(filename)
-  source = File.read(filename)
-  tokens = Lexer.lex(source)
-  AST.new(tokens).parse
-end
-
 class Stack < Array
   def pop(*args)
     items = args.any? ? args.first : 1
@@ -285,13 +279,22 @@ class Runner
   def initialize
     @scope = {}
     @dir_stack = []
+    @base_stack = []
   end
 
-  def run(filename)
+  def load(filename)
     @dir_stack.push(File.dirname(filename))
     stack = Stack.new
 
-    expressions = expressions_from_file(filename)
+    source = File.read(filename)
+    evaluate(source, stack)
+
+    warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
+    @dir_stack.pop
+  end
+
+  def evaluate(source, stack = @base_stack)
+    expressions = expressions(source)
 
     while expressions.any?
       expression = expressions.shift
@@ -299,9 +302,6 @@ class Runner
       warn " -: #{stack.join(' ')}\n\n" if ENV['DEBUG']
       expression.run(stack, @scope, expressions)
     end
-
-    warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
-    @dir_stack.pop
   end
 
   def def_builtin(name, &block)
@@ -311,11 +311,20 @@ class Runner
   def pwd
     @dir_stack.last
   end
+
+  private
+
+  def expressions(source)
+    tokens = Lexer.lex(source)
+    AST.new(tokens).parse
+  end
 end
 
 runner = Runner.new
 
-runner.def_builtin('puts') { |stack| puts stack.pop }
+runner.def_builtin('puts') { |stack| STDOUT.puts stack.pop }
+runner.def_builtin('print') { |stack| STDOUT.print stack.pop }
+runner.def_builtin('gets') { |stack| stack.push(STDIN.gets) }
 
 runner.def_builtin('+')    { |stack| stack.push(stack.pop + stack.pop) }
 runner.def_builtin('-')    { |stack| x, y = stack.pop(2); stack.push(x - y) }
@@ -342,8 +351,9 @@ runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); st
 runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
 runner.def_builtin('fail') { |stack| failure_message = stack.pop; fail failure_message.to_s }
 
-runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.run("lib/#{filename}.l") } }
-runner.def_builtin('load') { |stack| stack.pop.expressions.each { |filename| runner.run("#{runner.pwd}/#{filename}.l") } }
+runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.load("lib/#{filename}.l") } }
+runner.def_builtin('load') { |stack| stack.pop.expressions.each { |filename| runner.load("#{runner.pwd}/#{filename}.l") } }
+runner.def_builtin('eval') { |stack| runner.evaluate(stack.pop) }
 
-runner.run('lib/core.l')
-runner.run(ARGV.first)
+runner.load('lib/core.l')
+runner.load(ARGV.first)

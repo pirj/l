@@ -1,9 +1,8 @@
 == Program
 
-= builting 'use ( filenames -- )
-
-= builting 'load ( filenames -- )
-
+= builtin 'use ( filenames -- )
+= builtin 'load ( filenames -- )
+= builtin 'eval ( string -- )
 
 == Logic
 
