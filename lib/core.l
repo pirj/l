@@ -47,6 +47,12 @@
 
 = builtin 'quote ( expression -- quote )
 
+= ( quote quote -- composed )
+'compose [
+  [ call ] curry
+  [ [ call ] curry ] dip
+  [ 'call dip call ] curry curry
+] def
 
 == Shuffle words
 

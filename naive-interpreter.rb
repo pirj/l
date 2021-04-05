@@ -118,6 +118,10 @@ class NumberLiteral
     other.is_a?(NumberLiteral) && number.eql?(other.number)
   end
 
+  def expressions
+    [self]
+  end
+
   protected
 
   attr_reader :number
