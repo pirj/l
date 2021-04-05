@@ -155,7 +155,7 @@ class Quote
   end
 
   def inspect
-    exprs.one? ?
+    exprs.one? && exprs.first.is_a?(Word) ?
       "'#{exprs.first.inspect}" :
       "[ #{exprs.map(&:inspect).join(' ')} ]"
   end
