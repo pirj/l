@@ -22,3 +22,11 @@
 
 "foo" "foo" assert-is
 "foo" "bar" assert-is-not
+
+0 false assert-is-not
+1 false assert-is-not
+1 'true assert-is-not
+false 0 assert-is-not
+false 1 assert-is-not
+'true 1 assert-is-not
+"foo" false assert-is-not

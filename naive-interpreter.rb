@@ -115,7 +115,7 @@ class NumberLiteral
   end
 
   def eql?(other)
-    number.eql?(other.number)
+    other.is_a?(NumberLiteral) && number.eql?(other.number)
   end
 
   protected
@@ -173,7 +173,7 @@ class Quote
   end
 
   def eql?(other)
-    exprs.eql?(other.exprs)
+    other.is_a?(Quote) && exprs.eql?(other.exprs)
   end
 
   def hash

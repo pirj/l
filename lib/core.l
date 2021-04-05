@@ -40,7 +40,7 @@
 
 = builtin 'call ( quote -- )
 
-= builtin 'is ( quote quote -- boolean )
+= builtin 'is ( value value -- boolean )
 
 = builtin 'curry ( expression quote -- curried-quote )
 
