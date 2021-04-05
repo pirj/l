@@ -348,7 +348,7 @@ runner.def_builtin('when') { |stack, _, expressions| condition, quote = stack.po
 
 runner.def_builtin('dip')  { |stack, _, expressions| x, quote = stack.pop(2); stack.push(quote); expressions.unshift(Word.new('call'), x) }
 
-runner.def_builtin('debug') { |stack, scope, expressions| require 'pry'; binding.pry }
+runner.def_builtin('stack') { |stack| puts stack }
 runner.def_builtin('fail') { |stack| failure_message = stack.pop; fail failure_message.to_s }
 
 runner.def_builtin('use') { |stack| stack.pop.expressions.each { |filename| runner.load("lib/#{filename}.l") } }

@@ -3,6 +3,7 @@
 = builtin 'use ( filenames -- )
 = builtin 'load ( filenames -- )
 = builtin 'eval ( string -- )
+= builtin 'fail ( -- )
 
 == Logic
 
