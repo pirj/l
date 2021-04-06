@@ -25,24 +25,6 @@
   if        = sequence quote each / 'false
 ] def
 
-= build a range sequence
-'[1,b] [  = ( bound -- sequence )
-  'false [1,b]i
-] def
-
-'[1,b]i [  = internal ( b sequence -- b-1 sequence-with-b )
-  2dup          = b seq b seq
-  drop          = b seq b
-  swap          = b b seq
-  quote curry   = b new-seq
-  over          = b new-seq b
-  [ 1 - ] 2dip  = b-1 new-seq b
-  1 is not      = b-1 new-seq last-iteration?
-  '[1,b]i       = b-1 new-seq last-iteration? <recursive-call>
-  'nip
-  if
-] def
-
 = ( sequence index -- value )
 'nth [
   [ head-tail swap ] dip     = seq value index
@@ -50,4 +32,38 @@
   [ drop nip ]
   [ 1 - nip nth ]
   if
+] def
+
+
+== Sequence builders
+
+= ( initial 'next-quote 'until-quote -- sequence )
+'make-sequence [
+  compose-next-until
+  quote
+  'next-until
+  compose compose
+] def
+
+'compose-next-until [
+  [ 'dup ] 2dip    = initial 'dup next-quote until-quote
+  [ 'dup ] dip     = initial 'dup next-quote
+  compose compose compose  = initial [ dup next dup until ]
+] def
+
+= ( initial quote -- sequence )
+'next-until [
+  dup 'call dip    = initial next-value last? quote
+  swap             = initial next-value quote last?
+  [ drop 'false curry ]
+  [ [ next-until ] curry curry ]
+  if
+] def
+
+
+== Ranges
+
+= ( bound -- sequence )
+'[1,b] [
+  'is curry [ 1 [ 1 + ] ] dip make-sequence
 ] def

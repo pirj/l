@@ -8,6 +8,7 @@
   preserving
   sequence-fold
   sequence-literal
+  sequence-make
   sequence-manual-build
   sequence-nth
   sequence-quote-build
