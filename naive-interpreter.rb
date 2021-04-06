@@ -287,14 +287,11 @@ class Runner
   end
 
   def load(filename)
-    @dir_stack.push(File.dirname(filename))
-    stack = Stack.new
+    load_file(filename, Stack.new)
+  end
 
-    source = File.read(filename)
-    evaluate(source, stack)
-
-    warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
-    @dir_stack.pop
+  def load_main(filename)
+    load_file(filename, @base_stack)
   end
 
   def evaluate(source, stack = @base_stack)
@@ -321,6 +318,16 @@ class Runner
   def expressions(source)
     tokens = Lexer.lex(source)
     AST.new(tokens).parse
+  end
+
+  def load_file(filename, stack)
+    @dir_stack.push(File.dirname(filename))
+
+    source = File.read(filename)
+    evaluate(source, stack)
+
+    warn "#{filename} left with a non-empty stack: #{stack}" unless stack.empty?
+    @dir_stack.pop
   end
 end
 
@@ -360,4 +367,4 @@ runner.def_builtin('load') { |stack| stack.pop.expressions.each { |filename| run
 runner.def_builtin('eval') { |stack| runner.evaluate(stack.pop) }
 
 runner.load('lib/core.l')
-runner.load(ARGV.first)
+runner.load_main(ARGV.first)
