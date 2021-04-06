@@ -350,6 +350,7 @@ runner.def_builtin('drop') { |stack| stack.pop }
 runner.def_builtin('swap') { |stack| a, b = stack.pop(2); stack.push(b, a) }
 
 runner.def_builtin('curry') { |stack| expression, quote = stack.pop(2); stack.push(Quote.new(expression, *quote.expressions)) }
+runner.def_builtin('compose') { |stack| quote1, quote2 = stack.pop(2); stack.push(Quote.new(*quote1.expressions, *quote2.expressions)) }
 runner.def_builtin('quote') { |stack| expression = stack.pop; stack.push(Quote.new(expression)) }
 
 FALSE = Word.quoted('false')
