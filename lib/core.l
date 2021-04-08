@@ -94,3 +94,23 @@
 
 = ( x y quote -- x y )
 '2dip [ [ dip ] curry dip ] def
+
+= ( ..a x quot: ( ..a x -- ..b ) -- ..b x )
+'keep [
+  over 'call dip
+] def
+
+= ( ..a x y quot: ( ..a x y -- ..b ) -- ..b x y )
+'2keep [
+  pick pick 'call 2dip
+] def
+
+= ( x p q -- )
+'bi [
+  [ keep ] dip call
+] def
+
+= ( x y p q -- )
+'2bi [
+  [ 2keep ] dip call
+] def
