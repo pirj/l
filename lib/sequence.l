@@ -60,10 +60,18 @@
   if
 ] def
 
+'infinite [ [ drop false ] ] def
+
 
 == Ranges
 
+= ( initial bound -- sequence )
+'[a,b] [
+  'is curry [ [ 1 + ] ] dip  = a [ 1 + ] [ b is ]
+  make-sequence
+] def
+
 = ( bound -- sequence )
 '[1,b] [
-  'is curry [ 1 [ 1 + ] ] dip make-sequence
+  1 swap [a,b]
 ] def
