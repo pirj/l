@@ -15,10 +15,14 @@
   5 assert-is
   9 assert-is
 
-1 3 5 [ + + ] 2keep = 9 3 5
+1 3 [ + ] 'call keep
+  '+ assert-is
+  4 assert-is
+
+3 5 [ + ] 2keep = 8 3 5
   5 assert-is
   3 assert-is
-  9 assert-is
+  8 assert-is
 
 2 [ 1 - ] [ 1 + ] bi  = 1 3
   3 assert-is
