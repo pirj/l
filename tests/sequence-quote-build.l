@@ -24,10 +24,10 @@ linear-sequence 5 nth 5 assert-is
 
 = factorial(n) = n * factorial(n-1), 1 1 2 6 24 120 720 5040
 'factorial-sequence [  = ( -- sequence )
-  [ 2 1 '* next-with-index ]
+  [ 1 1 '* next-with-index ]
 ] def
 
-factorial-sequence 7 nth 5040 assert-is
+factorial-sequence 8 nth 5040 assert-is
 = well, you can't call it as `0 nth`, the sequence starts with its first element which is for factorial(1)
 
 
