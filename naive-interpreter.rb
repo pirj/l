@@ -343,7 +343,7 @@ runner.def_builtin('*')    { |stack| stack.push(stack.pop * stack.pop) }
 runner.def_builtin('/')    { |stack| x, y = stack.pop(2); stack.push(x / y) }
 
 runner.def_builtin('def')  { |stack, scope| quote = stack.pop; quoted_word = stack.pop; scope[quoted_word] = quote }
-runner.def_builtin('call') { |stack, _, expressions| quote = stack.pop; expressions.unshift(*quote.expressions) }
+runner.def_builtin('call') { |stack, _, expressions| quote = stack.pop; quote.call(stack, nil, expressions) }
 
 runner.def_builtin('dup')  { |stack| stack.push(stack.last) }
 runner.def_builtin('drop') { |stack| stack.pop }
