@@ -1,6 +1,6 @@
 # inspiration
 
-lisp: quote􏰀 atom􏰀 eq􏰀 car􏰀 cdr􏰀 cons􏰀 cond
+lisp: quote atom eq car cdr cons cond
 factor: dup swap drop call
 
 # refs
@@ -30,70 +30,13 @@ simplicity - easy to read
 interop - use your existing stack, use FOR your existing stack (as lib)
 general-purpose - use for anything
 exceptions, cooperative threading - https://concatenative.org/wiki/revision/1184
-garbage collection
-simple but not naive parsing - able to understand that 'word is a quoted word and [dup push]
+? garbage collection - see https://koka-lang.github.io/koka/doc/book.html#why-perceus for no garbage
+naive lexing and parsing, both by humans and machines
 extensible with parsing words - similar to lisp macros
-refactoring toolset built-in - allows to find common code that can be compacted
-effect inference and stack offect checks
+refactoring toolset built-in - allows finding common code that can be extracted or reused
+effect inference and stack effect checks
 homoiconic - code is data
 types, objects - specific implementations (e.g. https://docs.factorcode.org/content/word-sum-of-squares,math.statistics.html)
-
-# ffi interop
-
-nix: file:open file:read file:write file:close
-
-# parser
-
-www.vpri.org/pdf/tr2010003_PEG.pdf source->ast->pseudo->machine
-
-# interpreter (ruby)? jit (which vm)?
-
-asm linux http://asm.sourceforge.net/articles/linasm.html
-linux syscalls https://linuxhint.com/list_of_linux_syscalls/
-https://habr.com/ru/post/347596/
-
-Factor's optimizing compiler generates machine code for x86 (32 and 64-bit), as well as PowerPC (32-bit only). The optimizing compiler is written entirely in Factor. Its implementation can be found in basis/compiler/ and basis/cpu/
-
-http://microvm.github.io/ (dead)
-
-# bootstrap
-
-ruby?
-
-
-a quote is only identical to itself
-> is 'false 'false
-true
-> is 'false 'true
-false
-
-'false ( -- false ) [ 'false ] def
-'true ( -- true ) [ 'true ] def
-
-> 'false
-'false
-
-> false
-'false
-
-> 1 2 sum
-3
-
-> 1 2 'sum call
-3
-
-> 1 2 [ sum ] call
-3
-
-# inline replacement
-
-'twice ( n -- double-n ) [ 2 mul ] def
-'sq ( n - n-squared ) [ dup mul ] def
-
-# annotations
-
-'sum-of-squares ( seq -- sum ) [ [ sq ] map sum ] private def
-                                                  ^^^^^^^ specifies a special place in the namespace that won't be exported and made available for consumers
 
 # sneak peek
 
@@ -182,3 +125,16 @@ book https://www.amazon.com/Programming-Language-Design-Concepts-David/dp/047085
 https://esolangs.org
 
 The Theory of Concatenative Combinators https://web.archive.org/web/20180324230846/https://tunes.org/~iepos/joy.html
+
+# compiling to native code - meh!
+
+https://github.com/factor/factor/blob/master/extra/elf/elf.factor
+https://en.wikipedia.org/wiki/Executable_and_Linkable_Format#FatELF:_universal_binaries_for_Linux
+https://golang.org/src/syscall/
+https://apidock.com/ruby/Kernel/syscall
+
+asm linux http://asm.sourceforge.net/articles/linasm.html
+linux syscalls https://linuxhint.com/list_of_linux_syscalls/
+https://habr.com/ru/post/347596/
+
+Factor's optimizing compiler generates machine code for x86 (32 and 64-bit), as well as PowerPC (32-bit only). The optimizing compiler is written entirely in Factor. Its implementation can be found in basis/compiler/ and basis/cpu/

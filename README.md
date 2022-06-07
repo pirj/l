@@ -5,14 +5,16 @@ Welcome to L
 ## What is L?
 
 L is a new programming language. It is:
- - concise (easy to type)
- - simple (easy to read)
+ - simple, easy to read (when you dig it)
+ - concise, easy to type
 
 ## Inspiration Sources
 
-[Factor](https://factorcode.org/), [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)), [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)), [Clojure](https://clojure.org/about/rationale), [Erlang](https://rvirding.blogspot.com/2019/01/the-erlang-rationale.html), [Python](https://en.m.wikipedia.org/wiki/Zen_of_Python), Paul Graham's work on [Arc](http://www.paulgraham.com/lisp.html) and partially by [Ruby](https://www.ruby-lang.org/) and [Crystal](https://crystal-lang.org/).
+[Factor](https://factorcode.org/), [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)), [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)), [Clojure](https://clojure.org/about/rationale), [Erlang](https://rvirding.blogspot.com/2019/01/the-erlang-rationale.html), [Python](https://en.m.wikipedia.org/wiki/Zen_of_Python), Paul Graham's work on [Arc](http://www.paulgraham.com/lisp.html), partially by [Ruby](https://www.ruby-lang.org/) and [Crystal](https://crystal-lang.org/), and lately [RetroForth](http://retroforth.org) and [Koka](https://koka-lang.github.io/koka).
 
 > One reason Lisp cores evolve so slowly is that we get used to them. You start to think in the operators that already exist. It takes a conscious effort to imagine how your code might be rewritten using operators that don't. -- Paul Graham
+
+> Making things easy to do is a false economy. Focus on making things easy to understand and the rest will follow. -- Peter Bourgon
 
 ## Sneak Peek
 
@@ -38,24 +40,24 @@ gets chomp file:read puts
 
 ## Building Blocks
 
-Word, can refer to a function:
+Word, a named function:
 ```
 recent-emails
 ```
 
-Literals:
+Literal:
 ```
 1
 "hello"
 6.626
 ```
 
-Quote, an anonymous function (a value denoting a snippet of code):
+Quote, an anonymous function, a value denoting a snippet of code:
 ```
 [ 3 + ]
 ```
 
-One-word quote, can be used as a symbol:
+One-word quote, can be used as a unique value:
 ```
 'album
 ```
@@ -70,23 +72,30 @@ it is equal to itself only.
 
 Functions and methods most probably sound familiar to you. L is not exception to that.
 
-Define a function named `multiply-by-two`. Followed by a square-bracket delimited anonymous function, or a quote, a code block that represents the implementation. And `def` glue code follows to save the reference to this function in the scope by the name.
+Quotes can be associated with a word, named.
+First comes the name, a quoted word, then the quote, and `def` to associate the two:
 ```
 'multiply-by-two [ 2 * ] def
 ```
 
-Let's use it by adding some data, and using the results by outputting them to the console.
+Add input, and output the result to the console:
 ```
 5 multiply-by-two puts
 ```
-You may expect to see 10 printed.
+This, to no surprise, prints `10`.
 
 ## Running
 
 Install Ruby.
-Run:
+
+Run the test suite:
 ```
-ruby naive-interpreter.rb examples/1.l
+ruby naive-interpreter.rb tests/all.l
+```
+
+Run REPL:
+```
+ruby naive-interpreter.rb repl.l
 ```
 
 ## Learn
@@ -106,18 +115,36 @@ Short-term plans:
  - [ ] add error traces
  - [ ] bootstrap so L can interpret itself
  - [ ] settle on a set of base functions
+ - [ ] 
 
 ## Design Decisions
 
 Concatenative, Reverse Polish Notation (vs parenthesis).
 
-Homoiconicity.
+Homoiconicity, code is data.
 
-Names and special characters (hyphen vs underscore in variable names, lower-case, single-quote, equals sign for comments, square brackets).
+Names and special characters:
+ - hyphen vs underscore in variable names
+ - lower-case
+ - single-quote
+ - equals sign for comments
+ - square brackets
+ - question mark for words with a boolean result
 
-No symbols (a quote is identical to itself).
+No special syntax if possible, e.g. no symbols (a one-word quote is identical to itself).
 
-No special syntax.
+Parsing words vs compile-time inlining. Due to homoiconicity, it is impossible to tell if a quote will be evaluated or used as a data structure, so pre-optimizing it to `[ 2 ]` does not make sense:
+```
+[ 1 1 + ] call  = 2
+= vs
+[ 1 1 + ] [ 1 ] compose = [ 1 1 + 1 ]
+```
+An parsing word would run when parsing, and can can denote inlining and any other transformation before execution.
+```
+'two [ 1 1 + ] \inline def
+= or
+'red [ f00 \rgb ] def
+```
 
 ## License
 

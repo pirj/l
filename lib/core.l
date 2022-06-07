@@ -7,7 +7,7 @@
 
 == Logic
 
-= false returns itself
+= false evaluates to itself
 'false [ 'false ] def
 
 = ( boolean -- inverse )
