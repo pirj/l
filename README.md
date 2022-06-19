@@ -82,7 +82,33 @@ It can be used right away, pass it a `5` as input, tell it to print the result, 
 ```
 5 multiply-by-two puts
 ```
-This, to no surprise, prints `10`.
+
+### Data Structures (not implemented yet)
+
+You can build nearly anything using a list: hash maps, trees.
+```
+[
+  [ 'name 'Bob' ]
+  [ 'surname 'Bean' ]
+]
+
+'surname of  = > 'Bean'
+```
+
+Or define a blueprint:
+```
+'person [
+  'name
+  'surname
+  optional 'age
+] blueprint
+
+'person 'full-name [ [ name ' ' surname ] join ] def-method
+
+[ 'Bob' 'Bean' ] 'person new
+
+'full-name of puts  = > 'Bob Bean'
+```
 
 ## Running
 
