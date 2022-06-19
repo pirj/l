@@ -48,7 +48,7 @@ recent-emails
 Literal:
 ```
 1
-"hello"
+'hello'
 6.626
 ```
 
@@ -72,13 +72,13 @@ it is equal to itself only.
 
 Functions and methods most probably sound familiar to you. L is not exception to that.
 
-Quotes can be associated with a word, named.
-First comes the name, a quoted word, then the quote, and `def` to associate the two:
+Quotes can be associated with a word.
+First comes quoted word that serves as a function handle, then the quote the function implementation, and a `def` to associate the two:
 ```
 'multiply-by-two [ 2 * ] def
 ```
 
-Add input, and output the result to the console:
+It can be used right away, pass it a `5` as input, tell it to print the result, and, to no surprise, this prints `10`:
 ```
 5 multiply-by-two puts
 ```
@@ -100,7 +100,7 @@ ruby naive-interpreter.rb repl.l
 
 ## Learn
 
-No learning resources for a language that young exist (it's just one day old!).
+No learning resources for a language that young exist (~it's just one day old!~).
 Articles about concatenative languages should get you going:
 
 https://github.com/andreaferretti/factor-tutorial
@@ -115,7 +115,6 @@ Short-term plans:
  - [ ] add error traces
  - [ ] bootstrap so L can interpret itself
  - [ ] settle on a set of base functions
- - [ ] 
 
 ## Design Decisions
 
@@ -124,26 +123,32 @@ Concatenative, Reverse Polish Notation (vs parenthesis).
 Homoiconicity, code is data.
 
 Names and special characters:
- - hyphen vs underscore in variable names
- - lower-case
- - single-quote
- - equals sign for comments
- - square brackets
- - question mark for words with a boolean result
+ - hyphen vs underscore in names (`paint-green`)
+ - lower-case (`president-of-united-world`)
+ - single-quote (`'hello, united world!'`, `divide 'conquer each`)
+ - equals sign for comments (`1 puts  = this outputs '1' to the standard output`)
+ - square brackets (`[ spare-your-pinkies ]`)
+ - question mark for words with a boolean result (`pick-apple yellow? 'eat if`)
 
 No special syntax if possible, e.g. no symbols (a one-word quote is identical to itself).
 
-Parsing words vs compile-time inlining. Due to homoiconicity, it is impossible to tell if a quote will be evaluated or used as a data structure, so pre-optimizing it to `[ 2 ]` does not make sense:
+Parsing words vs compile-time inlining. Due to homoiconicity, it is impossible to tell if a quote will be evaluated or used as a data structure:
 ```
 [ 1 1 + ] call  = 2
 = vs
 [ 1 1 + ] [ 1 ] compose = [ 1 1 + 1 ]
 ```
-An parsing word would run when parsing, and can can denote inlining and any other transformation before execution.
+
+A parsing word would run during parsing, and can specify inlining and any other code transformation before execution.
 ```
 'two [ 1 1 + ] \inline def
+= transformed to just:
+'two [ 2 ] def
+
 = or
 'red [ f00 \rgb ] def
+= transformed to:
+'red [ '#FF0000' ] def
 ```
 
 ## License
