@@ -47,6 +47,8 @@
 
 = builtin 'quote ( expression -- quote )
 
+= builtin 'empty? ( quote -- boolean )
+
 = ( quote quote -- composed )
 = 'compose [
 =   [ call ] curry
