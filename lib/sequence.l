@@ -1,6 +1,18 @@
 == Sequence combinators
 
-= ( sequence -- value-or-values sequence-or-false )
+= TODO: change the quote to be first?
+= + when running a quote against values, e.g. in `map`, values are at the top
+=   of the stack. And once they are processed, a quote is there, quote is not
+=   necessary to call over with a `dip`.
+= - shuffling needed to put the quote to the bottom
+
+= Sequence is a nested structure of quotes.
+= Each quote has one or several values, and also one quote.
+= An empty quote (`[ ]`) denotes the end of the sequence.
+= This limits to a sequential access to elements, but allows
+= for lazy, potentially endless sequences.
+
+= ( sequence -- value-or-values sequence )
 'head-tail [ call ] def
 
 = ( sequence quote -- result )
